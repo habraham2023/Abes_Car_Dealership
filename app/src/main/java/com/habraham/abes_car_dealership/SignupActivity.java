@@ -54,6 +54,7 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
+    // Attempts to sign up a user with given credentials, if successful direct user to main screen
     private void attemptSignup(String username, String password) {
         ParseUser user = new ParseUser();
         user.setUsername(username);
