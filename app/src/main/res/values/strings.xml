@@ -5,4 +5,8 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="cont">Continue</string>
+    <string name="listings">Listings</string>
+    <string name="favorites">Favorites</string>
+    <string name="chat">Chat</string>
+    <string name="profile">Profile</string>
 </resources>
