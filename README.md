@@ -107,10 +107,13 @@ Users can find cars that other users are selling in their area. Users can also s
    | ------------- | -------- | ------------|
    | objectId      | String   | unique id for the user post (default field) |
    | seller        | Pointer to User | listing's seller |
+   | title         | String   | listing's title |
+   | make          | String   | listing's manufacture |
+   | model         | String   | listing's model |
+   | year          | String   | listing's year |
    | images        | File Array | images of listing |
    | description   | String   | general description of listing |
    | extraInformation | String | extra information that the seller might want to share that doesn't fit in description |
-   | favoritesCount | Number  | number of favorites for the post |
    | createdAt     | DateTime | date when post is created (default field) |
    | updatedAt     | DateTime | date when post is last updated (default field) |
 
@@ -122,8 +125,27 @@ Users can find cars that other users are selling in their area. Users can also s
    | initiate      | Pointer to User | person who initiates a chat session |
    | contacted     | Pointer to User | person who contacted in a chat session |
    | chatLog       | String Array | log of chat session |
-   | createdAt     | DateTime | date when post is created (default field) |
-   | updatedAt     | DateTime | date when post is last updated (default field) |
+   | createdAt     | DateTime | date when chat is created (default field) |
+   | updatedAt     | DateTime | date when chat is last updated (default field) |
+   
+#### Favorite
+   | Property      | Type     | Description |
+   | ------------- | -------- | ------------|
+   | objectId      | String   | unique id for the chat session (default field) |
+   | user          | Pointer to User | person who favorited a listing |
+   | listing       | Pointer to Listing | listing that a user favorited |
+   | createdAt     | DateTime | date when favorite is created (default field) |
+   
+#### User
+   | Property      | Type     | Description |
+   | ------------- | -------- | ------------|
+   | objectId      | String   | unique id for the chat session (default field) |
+   | username      | String   | username that the user chose |
+   | password      | String   | password that the user chose |
+   | profilePicture | File   | profile picture that the user chose |
+   | chats         | Chat Array | array of all chats user has active |
+   | createdAt     | DateTime | date when user is created (default field) |
+   | updatedAt     | DateTime | date when user is last updated (default field) |
 
 ### Networking
 
