@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Abe\'s Community Car Dealership</string>
+    <string name="login">Login</string>
+    <string name="signup">Signup</string>
 </resources>
