@@ -13,5 +13,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Direct user to Onboarding screen if they don't already logged in
+        if (ParseUser.getCurrentUser() == null) {
+            Intent intent = new Intent(this, OnboardingActivity.class);
+            startActivity(intent);
+        }
     }
 }

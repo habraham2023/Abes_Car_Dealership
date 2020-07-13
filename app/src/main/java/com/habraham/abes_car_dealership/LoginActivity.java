@@ -1,24 +1,21 @@
 package com.habraham.abes_car_dealership;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.parse.LogInCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
 public class LoginActivity extends AppCompatActivity {
     MaterialButton btnSignup;
     MaterialButton btnContinue;
-    TextInputLayout usernameTextInput;
     TextInputEditText usernameEditText;
     TextInputLayout passwordTextInput;
     TextInputEditText passwordEditText;
@@ -29,14 +26,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         btnSignup = findViewById(R.id.btnSignup);
-        btnContinue = findViewById(R.id.btnContine);
+        btnContinue = findViewById(R.id.btnContinue);
 
-        usernameTextInput = findViewById(R.id.username_text_input);
         usernameEditText = findViewById(R.id.username_edit_text);
 
         passwordTextInput = findViewById(R.id.password_text_input);
         passwordEditText = findViewById(R.id.password_edit_text);
 
+        // Allow user to go to signup screen if they don't have an account
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -45,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // Listens for when user tries to login
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // Attempts to sign in user with given credentials, if successful direct user to main screen
     private void attemptSignIn(String username, String password) {
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
@@ -64,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
-                    finish();
+                    finishAffinity();
                 }
             }
         });

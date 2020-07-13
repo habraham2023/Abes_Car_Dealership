@@ -5,5 +5,14 @@
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorAccent">@color/primaryLightColor</item>
-        </style>
+    </style>
+
+    <style name="Widget.Abe.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="backgroundTint">@color/primaryDarkColor</item>
+    </style>
+
+    <style name="Widget.Abe.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/primaryDarkColor</item>
+    </style>
 </resources>
