@@ -13,6 +13,8 @@ import java.util.List;
 public class Listing extends ParseObject {
     public static final String KEY_TITLE = "title";
     public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_SELLER = "seller";
+
     public static final List<String> listingsFavorited = new ArrayList<>();
 
     public static void getAllListingsFavorited(final FindCallback<Favorite> callback) {

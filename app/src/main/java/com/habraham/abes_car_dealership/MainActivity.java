@@ -13,7 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.habraham.abes_car_dealership.fragments.ChatsFragment;
 import com.habraham.abes_car_dealership.fragments.FavoritesFragment;
 import com.habraham.abes_car_dealership.fragments.ListingsFragment;
-import com.habraham.abes_car_dealership.fragments.ProfileFragment;
+import com.habraham.abes_car_dealership.fragments.MyListingsFragment;
 import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.miProfile:
                     default:
-                        fragment = new ProfileFragment();
+                        fragment = new MyListingsFragment();
                         break;
                 }
                 // Replace contents of rlContainer with fragment

@@ -64,6 +64,12 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         notifyDataSetChanged();
     }
 
+    public void set(List<Listing> listings) {
+        this.listings.clear();
+        this.listings.addAll(listings);
+        notifyDataSetChanged();
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         private TextView tvTitle;
         private TextView tvDescription;
