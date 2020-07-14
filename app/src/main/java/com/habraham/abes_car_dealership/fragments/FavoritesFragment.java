@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FavoritesFragment extends ListingsFragment {
+    private static final String TAG = "FavoritesFragment";
 
     @Override
     protected void getListings() {
+        Log.i(TAG, "getListings: " + Listing.listingsFavorited);
         ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
 
         query.findInBackground(new FindCallback<Listing>() {

@@ -25,10 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListingsFragment extends Fragment {
+    private static final String TAG = "ListingsFragment";
+
     Toolbar toolbar;
     RecyclerView rvListings;
     protected ListingsAdapter adapter;
-    List<Listing> listings;
 
     public ListingsFragment() {
         // Required empty public constructor
@@ -48,27 +49,29 @@ public class ListingsFragment extends Fragment {
         toolbar = view.findViewById(R.id.toolbar);
         rvListings = view.findViewById(R.id.rvListings);
 
-        getListings();
-
-        listings = new ArrayList<>();
-        adapter = new ListingsAdapter(getContext(), listings);
+        adapter = new ListingsAdapter(getContext(), new ArrayList<Listing>());
         rvListings.setLayoutManager(new LinearLayoutManager(getContext()));
         rvListings.setAdapter(adapter);
+
+        adapter.clear();
+        getListings();
     }
 
     protected void getListings() {
         Listing.getAllListingsFavorited(new FindCallback<Favorite>() {
             @Override
             public void done(List<Favorite> favorites, ParseException e) {
+                Listing.listingsFavorited.clear();
                 for (Favorite favorite : favorites) {
                     Listing.listingsFavorited.add(favorite.getListing().getObjectId());
                 }
-                Log.i("123", "done: " + Listing.listingsFavorited);
+                Log.i(TAG, "done: " + Listing.listingsFavorited);
                 ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
 
                 query.findInBackground(new FindCallback<Listing>() {
                     @Override
                     public void done(List<Listing> newListings, ParseException e) {
+                        adapter.clear();
                         adapter.addAll(newListings);
                     }
                 });

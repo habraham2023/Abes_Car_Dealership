@@ -108,6 +108,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
                                             Glide.with(context).load(R.drawable.favorite).into(ivFavorite);
                                             ivFavorite.setColorFilter(Color.BLACK);
                                             Listing.listingsFavorited.remove(listing.getObjectId());
+                                            Log.i(TAG, "onClick: " + Listing.listingsFavorited);
                                         }
                                     }
                                 });
@@ -128,6 +129,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
                             Glide.with(context).load(R.drawable.favorite_fill).into(ivFavorite);
                             ivFavorite.setColorFilter(context.getColor(R.color.secondaryDarkColor));
                             Listing.listingsFavorited.add(listing.getObjectId());
+                            Log.i(TAG, "onClick: " + Listing.listingsFavorited);
                         }
                     });
                 }
