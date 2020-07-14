@@ -59,6 +59,7 @@ public class SignupActivity extends AppCompatActivity {
         ParseUser user = new ParseUser();
         user.setUsername(username);
         user.setPassword(password);
+        user.put("screenName", username);
 
         user.signUpInBackground(new SignUpCallback() {
             @Override

@@ -11,4 +11,7 @@
     <string name="profile">Profile</string>
     <string name="listingImage">Image of car for sale</string>
     <string name="price">$10,000</string>
+    <string name="screenName">ScreenName</string>
+    <string name="editProfile">Edit Profile</string>
+    <string name="logout">Logout</string>
 </resources>

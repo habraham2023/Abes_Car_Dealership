@@ -4,12 +4,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -30,6 +32,7 @@ public class MyListingsFragment extends Fragment {
     RecyclerView rvMyListings;
     ListingsAdapter adapter;
     List<Listing> myListings;
+    Toolbar toolbar;
 
     public MyListingsFragment() {
         // Required empty public constructor
@@ -47,6 +50,7 @@ public class MyListingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         rvMyListings = view.findViewById(R.id.rvMyListings);
+        toolbar = view.findViewById(R.id.toolbar);
         myListings = new ArrayList<>();
         adapter = new ListingsAdapter(getContext(), myListings);
         rvMyListings.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -54,6 +58,19 @@ public class MyListingsFragment extends Fragment {
         Log.i(TAG, "done: ");
 
         getMyListings();
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.miSettings:
+                        ProfileFragment profileFragment = new ProfileFragment();
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, profileFragment).addToBackStack(null).commit();
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     private void getMyListings() {
