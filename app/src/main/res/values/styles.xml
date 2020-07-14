@@ -15,4 +15,17 @@
     <style name="Widget.Abe.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:textColor">@color/primaryDarkColor</item>
     </style>
+
+    <style name="Widget.Abe.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/primaryColor</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="TextAppearance.Abe.Toolbar" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
+    </style>
 </resources>

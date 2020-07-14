@@ -3,7 +3,9 @@ package com.habraham.abes_car_dealership.application;
 import android.app.Application;
 
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.models.Listing;
 import com.parse.Parse;
+import com.parse.ParseObject;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -12,6 +14,9 @@ public class ParseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Register Model classes for Parse
+        ParseObject.registerSubclass(Listing.class);
 
         // Use for troubleshooting -- remove this line for production
         Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
