@@ -23,7 +23,7 @@ public class ProfileFragment extends Fragment {
     ImageView ivProfilePicture;
     TextView tvScreenName;
     TextView tvUsername;
-
+    TextView tvBio;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -42,11 +42,17 @@ public class ProfileFragment extends Fragment {
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture);
         tvScreenName = view.findViewById(R.id.tvScreenName);
         tvUsername = view.findViewById(R.id.tvUsername);
+        tvBio = view.findViewById(R.id.tvBio);
 
         ParseUser user = ParseUser.getCurrentUser();
 
         Glide.with(getContext()).load(user.getParseFile("profilePicture").getUrl()).transform(new CircleCrop()).into(ivProfilePicture);
         tvScreenName.setText(user.getString("screenName"));
         tvUsername.setText("@" + user.getUsername());
+
+        if (user.getString("bio") == null)
+            tvBio.setText("Set a Bio.");
+        else
+            tvBio.setText(user.getString("bio"));
     }
 }
