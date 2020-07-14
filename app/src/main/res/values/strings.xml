@@ -9,4 +9,6 @@
     <string name="favorites">Favorites</string>
     <string name="chat">Chat</string>
     <string name="profile">Profile</string>
+    <string name="listingImage">Image of car for sale</string>
+    <string name="price">$10,000</string>
 </resources>

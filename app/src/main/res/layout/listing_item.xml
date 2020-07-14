@@ -12,10 +12,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/ivFirstImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginEnd="4dp"
+            android:contentDescription="@string/listingImage"
+            app:srcCompat="@color/secondaryDarkColor" />
+
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="44dp"
+            android:layout_toStartOf="@+id/info"
+            android:layout_toEndOf="@id/ivFirstImage"
             tools:text="Listing's Title" />
 
         <TextView
@@ -24,6 +35,42 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvTitle"
             android:layout_marginTop="12dp"
+            android:layout_toStartOf="@+id/info"
+            android:layout_toEndOf="@id/ivFirstImage"
             tools:text="@tools:sample/lorem[12]" />
+
+        <LinearLayout
+            android:id="@+id/info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="4dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/price"
+                android:textStyle="bold"
+                tools:text="@string/price" />
+
+            <TextView
+                android:id="@+id/tvDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Dist."
+                android:textStyle="bold"
+                tools:text="Dist." />
+
+            <ImageView
+                android:id="@+id/ivFavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/favorite" />
+        </LinearLayout>
     </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>
