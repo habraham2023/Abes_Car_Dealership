@@ -27,7 +27,7 @@ import java.util.List;
 public class ListingsFragment extends Fragment {
     Toolbar toolbar;
     RecyclerView rvListings;
-    ListingsAdapter adapter;
+    protected ListingsAdapter adapter;
     List<Listing> listings;
 
     public ListingsFragment() {
@@ -56,7 +56,7 @@ public class ListingsFragment extends Fragment {
         rvListings.setAdapter(adapter);
     }
 
-    private void getListings() {
+    protected void getListings() {
         Listing.getAllListingsFavorited(new FindCallback<Favorite>() {
             @Override
             public void done(List<Favorite> favorites, ParseException e) {

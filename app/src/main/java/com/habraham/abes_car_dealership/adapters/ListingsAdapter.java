@@ -54,6 +54,11 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         return listings.size();
     }
 
+    public void clear() {
+        listings.clear();
+        notifyDataSetChanged();
+    }
+
     public void addAll(List<Listing> list) {
         listings.addAll(list);
         notifyDataSetChanged();
