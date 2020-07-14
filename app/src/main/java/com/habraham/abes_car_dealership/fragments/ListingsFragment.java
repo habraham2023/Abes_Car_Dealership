@@ -1,6 +1,7 @@
 package com.habraham.abes_car_dealership.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.ListingsAdapter;
+import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -27,6 +29,7 @@ public class ListingsFragment extends Fragment {
     RecyclerView rvListings;
     ListingsAdapter adapter;
     List<Listing> listings;
+
     public ListingsFragment() {
         // Required empty public constructor
     }
@@ -54,12 +57,21 @@ public class ListingsFragment extends Fragment {
     }
 
     private void getListings() {
-        ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
-
-        query.findInBackground(new FindCallback<Listing>() {
+        Listing.getAllListingsFavorited(new FindCallback<Favorite>() {
             @Override
-            public void done(List<Listing> newListings, ParseException e) {
-                adapter.addAll(newListings);
+            public void done(List<Favorite> favorites, ParseException e) {
+                for (Favorite favorite : favorites) {
+                    Listing.listingsFavorited.add(favorite.getListing().getObjectId());
+                }
+                Log.i("123", "done: " + Listing.listingsFavorited);
+                ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
+
+                query.findInBackground(new FindCallback<Listing>() {
+                    @Override
+                    public void done(List<Listing> newListings, ParseException e) {
+                        adapter.addAll(newListings);
+                    }
+                });
             }
         });
     }

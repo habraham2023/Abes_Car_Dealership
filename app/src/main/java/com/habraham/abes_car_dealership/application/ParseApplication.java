@@ -3,6 +3,7 @@ package com.habraham.abes_car_dealership.application;
 import android.app.Application;
 
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.parse.Parse;
 import com.parse.ParseObject;
@@ -17,6 +18,7 @@ public class ParseApplication extends Application {
 
         // Register Model classes for Parse
         ParseObject.registerSubclass(Listing.class);
+        ParseObject.registerSubclass(Favorite.class);
 
         // Use for troubleshooting -- remove this line for production
         Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
@@ -29,9 +31,9 @@ public class ParseApplication extends Application {
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         builder.networkInterceptors().add(httpLoggingInterceptor);
 
-            // set applicationId, and server server based on the values in the Heroku settings.
-            // clientKey is not needed unless explicitly configured
-            // any network interceptors must be added with the Configuration Builder given this syntax
+        // set applicationId, and server server based on the values in the Heroku settings.
+        // clientKey is not needed unless explicitly configured
+        // any network interceptors must be added with the Configuration Builder given this syntax
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId("abes-community-car-dealership") // should correspond to APP_ID env variable
                 .clientKey(getString(R.string.masterKey))  // set explicitly unless clientKey is explicitly configured on Parse server
