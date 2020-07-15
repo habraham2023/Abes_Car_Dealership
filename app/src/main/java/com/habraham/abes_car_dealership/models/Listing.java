@@ -38,4 +38,12 @@ public class Listing extends ParseObject {
     public void setDescription(String description) {
         put(KEY_DESCRIPTION, description);
     }
+
+    public ParseUser getSeller() {
+        return getParseUser(KEY_SELLER);
+    }
+
+    public void setSeller(ParseUser seller) {
+        put(KEY_SELLER, seller);
+    }
 }

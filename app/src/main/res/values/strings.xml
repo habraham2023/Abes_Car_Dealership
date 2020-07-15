@@ -19,4 +19,8 @@
     <string name="takeNew">Take New</string>
     <string name="bio">Bio</string>
     <string name="save">Save</string>
+    <string name="newListing">Create New Listing</string>
+    <string name="listingTitle">Listing\'s Title</string>
+    <string name="description">Description</string>
+    <string name="createListing">Create Listing</string>
 </resources>

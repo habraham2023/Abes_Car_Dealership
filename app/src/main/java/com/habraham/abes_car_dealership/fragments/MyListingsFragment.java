@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.ListingsAdapter;
 import com.habraham.abes_car_dealership.models.Listing;
@@ -33,6 +34,7 @@ public class MyListingsFragment extends Fragment {
     ListingsAdapter adapter;
     List<Listing> myListings;
     Toolbar toolbar;
+    FloatingActionButton fabAddListing;
 
     public MyListingsFragment() {
         // Required empty public constructor
@@ -51,11 +53,12 @@ public class MyListingsFragment extends Fragment {
 
         rvMyListings = view.findViewById(R.id.rvMyListings);
         toolbar = view.findViewById(R.id.toolbar);
+        fabAddListing  = view.findViewById(R.id.fabAddListing);
+
         myListings = new ArrayList<>();
         adapter = new ListingsAdapter(getContext(), myListings);
         rvMyListings.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMyListings.setAdapter(adapter);
-        Log.i(TAG, "done: ");
 
         getMyListings();
 
@@ -69,6 +72,14 @@ public class MyListingsFragment extends Fragment {
                         break;
                 }
                 return true;
+            }
+        });
+
+        fabAddListing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CreationFragment creationFragment = new CreationFragment();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, creationFragment).addToBackStack(null).commit();
             }
         });
     }
