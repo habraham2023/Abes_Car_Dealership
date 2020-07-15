@@ -44,4 +44,10 @@ public class OnboardingActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        Log.i(TAG, "onBackPressed");
+        finishAffinity();
+    }
 }

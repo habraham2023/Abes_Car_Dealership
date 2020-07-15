@@ -11,7 +11,12 @@
     <string name="profile">Profile</string>
     <string name="listingImage">Image of car for sale</string>
     <string name="price">$10,000</string>
-    <string name="screenName">ScreenName</string>
+    <string name="screenName">Screen Name</string>
     <string name="editProfile">Edit Profile</string>
     <string name="logout">Logout</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="takeNew">Take New</string>
+    <string name="bio">Bio</string>
+    <string name="save">Save</string>
 </resources>
