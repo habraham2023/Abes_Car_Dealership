@@ -14,6 +14,8 @@ public class Listing extends ParseObject {
     public static final String KEY_TITLE = "title";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_SELLER = "seller";
+    public static final String KEY_MAKE = "make";
+    public static final String KEY_YEAR = "year";
 
     public static final List<String> listingsFavorited = new ArrayList<>();
 
@@ -45,5 +47,21 @@ public class Listing extends ParseObject {
 
     public void setSeller(ParseUser seller) {
         put(KEY_SELLER, seller);
+    }
+
+    public String getMake() {
+        return getString(KEY_MAKE);
+    }
+
+    public void setMake(String make) {
+        put(KEY_MAKE, make);
+    }
+
+    public String getYear() {
+        return getString(KEY_MAKE);
+    }
+
+    public void setYear(String year) {
+        put(KEY_YEAR, year);
     }
 }

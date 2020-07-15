@@ -38,4 +38,10 @@
     <style name="TextAppearance.Abe.TextInputLayout.HintText" parent="TextAppearance.MaterialComponents.Subtitle2">
         <item name="android:textColor">@color/secondaryLightColor</item>
     </style>
+    
+    <style name="Widget.Abe.TextInputLayout.DropdownMenu" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="hintTextColor">@color/secondaryLightColor</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="boxStrokeColor">@color/secondaryLightColor</item>
+    </style>
 </resources>

@@ -5,9 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.CreationFragment">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
             style="@style/Widget.Abe.Toolbar"
@@ -86,6 +88,57 @@
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/makeLayout"
+            style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginHorizontal="4dp"
+            android:hint="@string/make"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTextInput">
+
+            <AutoCompleteTextView
+                android:id="@+id/makeDropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/modelLayout"
+            style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginHorizontal="4dp"
+            android:hint="@string/model"
+            app:layout_constraintTop_toBottomOf="@+id/makeLayout">
+
+            <AutoCompleteTextView
+                android:id="@+id/modelDropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/yearLayout"
+            style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginHorizontal="4dp"
+            android:hint="@string/year"
+            app:layout_constraintTop_toBottomOf="@+id/modelLayout">
+
+            <AutoCompleteTextView
+                android:id="@+id/yearDropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCreateListing"
             style="@style/Widget.Abe.Button"
@@ -95,6 +148,6 @@
             android:text="@string/createListing"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/descriptionTextInput" />
+            app:layout_constraintTop_toBottomOf="@+id/yearLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

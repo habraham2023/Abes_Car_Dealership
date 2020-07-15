@@ -1,21 +1,24 @@
 package com.habraham.abes_car_dealership.fragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.models.Listing;
+import com.habraham.abes_car_dealership.rawValues;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -24,11 +27,17 @@ import com.parse.SaveCallback;
 public class CreationFragment extends Fragment {
     private static final String TAG = "CreationFragment";
 
+    Toolbar toolbar;
     TextInputLayout titleInputLayout;
     TextInputEditText titleEditText;
     TextInputLayout descriptionInputLayout;
     TextInputEditText descriptionEditText;
     MaterialButton btnCreateListing;
+
+    TextInputLayout makeLayout;
+    AutoCompleteTextView makeDropdown;
+    TextInputLayout yearLayout;
+    AutoCompleteTextView yearDropdown;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,11 +49,28 @@ public class CreationFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        toolbar = view.findViewById(R.id.toolbar);
         titleInputLayout = view.findViewById(R.id.titleTextInput);
         titleEditText = view.findViewById(R.id.titleEditText);
         descriptionInputLayout = view.findViewById(R.id.descriptionTextInput);
         descriptionEditText = view.findViewById(R.id.descriptionEditText);
         btnCreateListing = view.findViewById(R.id.btnCreateListing);
+        makeLayout = view.findViewById(R.id.makeLayout);
+        makeDropdown = view.findViewById(R.id.makeDropdown);
+        yearLayout = view.findViewById(R.id.yearLayout);
+        yearDropdown = view.findViewById(R.id.yearDropdown);
+
+        toolbar.setNavigationIcon(R.drawable.back);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction().remove(CreationFragment.this).commit();
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+
+        makeDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.makes));
+        yearDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.years));
 
         btnCreateListing.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,12 +87,24 @@ public class CreationFragment extends Fragment {
                     descriptionInputLayout.setError("Description of listing cannot be empty");
                     error = true;
                 }
-                if (!error) createListing(title, description);
+                String make = makeDropdown.getText().toString();
+                if (make.isEmpty()) {
+                    makeLayout.setError("Make of listing cannot be empty.");
+                    error = true;
+                }
+
+                String year = yearDropdown.getText().toString();
+                if (year.isEmpty()) {
+                    yearLayout.setError("Year of listing cannot be empty.");
+                    error = true;
+                }
+
+                if (!error) createListing(title, description, make, year);
             }
         });
     }
 
-    public void createListing(String title, String description) {
+    public void createListing(String title, String description, String make, String year) {
         titleInputLayout.setError(null);
         descriptionInputLayout.setError(null);
 
@@ -74,6 +112,8 @@ public class CreationFragment extends Fragment {
         listing.setTitle(title);
         listing.setDescription(description);
         listing.setSeller(ParseUser.getCurrentUser());
+        listing.setMake(make);
+        listing.setYear(year);
 
         listing.saveInBackground(new SaveCallback() {
             @Override

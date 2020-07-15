@@ -23,4 +23,7 @@
     <string name="listingTitle">Listing\'s Title</string>
     <string name="description">Description</string>
     <string name="createListing">Create Listing</string>
+    <string name="model">Model</string>
+    <string name="make">Make</string>
+    <string name="year">Year</string>
 </resources>
