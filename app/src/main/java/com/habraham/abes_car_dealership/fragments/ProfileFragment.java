@@ -61,6 +61,7 @@ public class ProfileFragment extends Fragment {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction().remove(ProfileFragment.this).commit();
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
