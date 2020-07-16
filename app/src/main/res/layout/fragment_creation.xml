@@ -68,6 +68,31 @@
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/sliderContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:elevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titleTextInput">
+
+            <com.smarteist.autoimageslider.SliderView
+                android:id="@+id/photoSlider"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                app:sliderIndicatorEnabled="true"
+                app:sliderIndicatorGravity="center|bottom"
+                app:sliderIndicatorRtlMode="on"
+                app:sliderIndicatorMargin="15dp"
+                app:sliderIndicatorOrientation="horizontal"
+                app:sliderIndicatorPadding="3dp"
+                app:sliderIndicatorRadius="2dp"
+                app:sliderIndicatorSelectedColor="#5A5A5A"
+                app:sliderIndicatorUnselectedColor="#FFF" />
+        </com.google.android.material.card.MaterialCardView>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/descriptionTextInput"
             style="@style/Widget.Abe.TextInputLayout"
@@ -77,7 +102,7 @@
             android:layout_marginTop="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleTextInput">
+            app:layout_constraintTop_toBottomOf="@+id/sliderContainer">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/descriptionEditText"
@@ -93,8 +118,8 @@
             style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
             android:layout_marginHorizontal="4dp"
+            android:layout_marginTop="24dp"
             android:hint="@string/make"
             app:layout_constraintTop_toBottomOf="@+id/descriptionTextInput">
 
@@ -102,7 +127,7 @@
                 android:id="@+id/makeDropdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"/>
+                android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -110,8 +135,8 @@
             style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
             android:layout_marginHorizontal="4dp"
+            android:layout_marginTop="24dp"
             android:hint="@string/model"
             app:layout_constraintTop_toBottomOf="@+id/makeLayout">
 
@@ -119,7 +144,7 @@
                 android:id="@+id/modelDropdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"/>
+                android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -127,8 +152,8 @@
             style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
             android:layout_marginHorizontal="4dp"
+            android:layout_marginTop="24dp"
             android:hint="@string/year"
             app:layout_constraintTop_toBottomOf="@+id/modelLayout">
 
@@ -136,7 +161,7 @@
                 android:id="@+id/yearDropdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"/>
+                android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton

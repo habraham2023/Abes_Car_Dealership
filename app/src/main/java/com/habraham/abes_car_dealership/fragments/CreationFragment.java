@@ -1,5 +1,6 @@
 package com.habraham.abes_car_dealership.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,11 +18,16 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.SliderAdapter;
+import com.habraham.abes_car_dealership.SliderItem;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.habraham.abes_car_dealership.rawValues;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
 
 
 public class CreationFragment extends Fragment {
@@ -38,6 +44,10 @@ public class CreationFragment extends Fragment {
     AutoCompleteTextView makeDropdown;
     TextInputLayout yearLayout;
     AutoCompleteTextView yearDropdown;
+
+    SliderView sliderView;
+    SliderAdapter adapter;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,6 +81,14 @@ public class CreationFragment extends Fragment {
 
         makeDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.makes));
         yearDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.years));
+
+        sliderView = view.findViewById(R.id.photoSlider);
+        adapter = new SliderAdapter(getContext());
+        sliderView.setSliderAdapter(adapter);
+        sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+        sliderView.setIndicatorSelectedColor(Color.WHITE);
+        sliderView.setIndicatorUnselectedColor(Color.GRAY);
 
         btnCreateListing.setOnClickListener(new View.OnClickListener() {
             @Override
