@@ -18,6 +18,7 @@
             android:layout_height="120dp"
             android:layout_marginEnd="4dp"
             android:contentDescription="@string/listingImage"
+            android:scaleType="centerCrop"
             app:srcCompat="@color/secondaryDarkColor" />
 
         <TextView

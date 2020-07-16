@@ -75,12 +75,14 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView tvTitle;
         private TextView tvDescription;
+        private ImageView ivFirstImage;
         private ImageView ivFavorite;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDescription = itemView.findViewById(R.id.tvDescription);
+            ivFirstImage = itemView.findViewById(R.id.ivFirstImage);
             ivFavorite = itemView.findViewById(R.id.ivFavorite);
             itemView.setOnClickListener(this);
         }
@@ -96,6 +98,8 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
                 Glide.with(context).load(R.drawable.favorite).into(ivFavorite);
                 ivFavorite.setColorFilter(Color.BLACK);
             }
+
+            Glide.with(context).load(listing.getImages().get(0).getUrl()).into(ivFirstImage);
 
 
             ivFavorite.setOnClickListener(new View.OnClickListener() {
