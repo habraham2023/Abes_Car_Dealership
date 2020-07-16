@@ -10,10 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.fragments.DetailsFragment;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.parse.DeleteCallback;
@@ -70,7 +72,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView tvTitle;
         private TextView tvDescription;
         private ImageView ivFavorite;
@@ -80,6 +82,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             ivFavorite = itemView.findViewById(R.id.ivFavorite);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(final Listing listing) {
@@ -140,6 +143,12 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
                     });
                 }
             });
+        }
+
+        @Override
+        public void onClick(View view) {
+            DetailsFragment detailsFragment = DetailsFragment.newInstance(listings.get(getAdapterPosition()));
+            ((AppCompatActivity)context).getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, detailsFragment).addToBackStack(null).commit();
         }
     }
 }
