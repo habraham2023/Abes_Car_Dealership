@@ -122,7 +122,7 @@ public class EditProfileFragment extends Fragment {
                 ParseUser user = ParseUser.getCurrentUser();
                 user.put("screenName", newScreenName);
                 user.put("bio", newBio);
-                user.put("profilePicture", new ParseFile(photoFile));
+                    user.put("profilePicture", new ParseFile(photoFile));
 
                 user.saveInBackground(new SaveCallback() {
                     @Override

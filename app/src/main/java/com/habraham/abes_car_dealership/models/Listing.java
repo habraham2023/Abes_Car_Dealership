@@ -2,6 +2,7 @@ package com.habraham.abes_car_dealership.models;
 
 import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -16,6 +17,7 @@ public class Listing extends ParseObject {
     public static final String KEY_SELLER = "seller";
     public static final String KEY_MAKE = "make";
     public static final String KEY_YEAR = "year";
+    public static final String KEY_IMAGES = "images";
 
     public static final List<String> listingsFavorited = new ArrayList<>();
 
@@ -63,5 +65,13 @@ public class Listing extends ParseObject {
 
     public void setYear(String year) {
         put(KEY_YEAR, year);
+    }
+
+    public List<ParseFile> getImages() {
+        return (List<ParseFile>) get(KEY_IMAGES);
+    }
+
+    public void setImages(List<ParseFile> images) {
+        put(KEY_IMAGES, images);
     }
 }

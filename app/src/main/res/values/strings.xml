@@ -26,4 +26,6 @@
     <string name="model">Model</string>
     <string name="make">Make</string>
     <string name="year">Year</string>
+    <string name="addPhoto">Add Photo</string>
+    <string name="one">1</string>
 </resources>

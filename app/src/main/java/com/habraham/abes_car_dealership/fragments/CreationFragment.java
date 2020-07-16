@@ -1,37 +1,58 @@
 package com.habraham.abes_car_dealership.fragments;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
-import com.habraham.abes_car_dealership.SliderAdapter;
-import com.habraham.abes_car_dealership.SliderItem;
+
 import com.habraham.abes_car_dealership.models.Listing;
 import com.habraham.abes_car_dealership.rawValues;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
-import com.smarteist.autoimageslider.SliderAnimations;
-import com.smarteist.autoimageslider.SliderView;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class CreationFragment extends Fragment {
     private static final String TAG = "CreationFragment";
+
+    public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
+    public String photoFileName = "image.jpg";
+    protected File photoFile;
 
     Toolbar toolbar;
     TextInputLayout titleInputLayout;
@@ -44,11 +65,10 @@ public class CreationFragment extends Fragment {
     AutoCompleteTextView makeDropdown;
     TextInputLayout yearLayout;
     AutoCompleteTextView yearDropdown;
+    MaterialButton btnAddPhoto;
 
-    SliderView sliderView;
-    SliderAdapter adapter;
-
-
+    List<ParseFile> photos;
+    TextView tvImageCount;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,6 +89,10 @@ public class CreationFragment extends Fragment {
         makeDropdown = view.findViewById(R.id.makeDropdown);
         yearLayout = view.findViewById(R.id.yearLayout);
         yearDropdown = view.findViewById(R.id.yearDropdown);
+        btnAddPhoto = view.findViewById(R.id.btnAddPhoto);
+        photos = new ArrayList<>();
+        tvImageCount = view.findViewById(R.id.tvImageCount);
+        tvImageCount.setText(Integer.toString(photos.size()));
 
         toolbar.setNavigationIcon(R.drawable.back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -82,13 +106,14 @@ public class CreationFragment extends Fragment {
         makeDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.makes));
         yearDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.years));
 
-        sliderView = view.findViewById(R.id.photoSlider);
-        adapter = new SliderAdapter(getContext());
-        sliderView.setSliderAdapter(adapter);
-        sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
-        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
-        sliderView.setIndicatorSelectedColor(Color.WHITE);
-        sliderView.setIndicatorUnselectedColor(Color.GRAY);
+
+        btnAddPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "onClick: " + photos.size());
+                launchCamera();
+            }
+        });
 
         btnCreateListing.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +142,11 @@ public class CreationFragment extends Fragment {
                     error = true;
                 }
 
+                if (photos.isEmpty()) {
+                    Toast.makeText(getContext(), "Listing needs at least one photo.", Toast.LENGTH_SHORT);
+                    error = true;
+                }
+
                 if (!error) createListing(title, description, make, year);
             }
         });
@@ -132,6 +162,7 @@ public class CreationFragment extends Fragment {
         listing.setSeller(ParseUser.getCurrentUser());
         listing.setMake(make);
         listing.setYear(year);
+        listing.setImages(photos);
 
         listing.saveInBackground(new SaveCallback() {
             @Override
@@ -140,5 +171,52 @@ public class CreationFragment extends Fragment {
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
+    }
+
+    public void launchCamera() {
+        // create Intent to take a picture and return control to the calling application
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Create a File reference for future access
+        photoFile = getPhotoFileUri(photoFileName);
+
+        // wrap File object into a content provider
+        // required for API >= 24
+        // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
+        Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider.Abes_Community_Car_Dealership", photoFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+
+        // Start the image capture intent to take photo
+        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
+
+    private File getPhotoFileUri(String photoFileName) {
+        // Get safe storage directory for photos
+        // Use `getExternalFilesDir` on Context to access package-specific directories.
+        // This way, we don't need to request external read/write runtime permissions.
+        File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+            Log.d(TAG, "failed to create directory");
+        }
+
+        // Return the file target for the photo based on filename
+        return new File(mediaStorageDir.getPath() + File.separator + photoFileName);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                // by this point we have the camera photo on disk
+                // Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+                // RESIZE BITMAP, see section below
+                // Load the taken image into a preview
+                photos.add(new ParseFile(photoFile));
+                tvImageCount.setText(Integer.toString(photos.size()));
+            } else { // Result was a failure
+                Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

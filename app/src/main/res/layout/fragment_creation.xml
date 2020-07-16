@@ -68,30 +68,16 @@
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/sliderContainer"
-            android:layout_width="match_parent"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddPhoto"
+            style="@style/Widget.Abe.Button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:elevation="8dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/addPhoto"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleTextInput">
-
-            <com.smarteist.autoimageslider.SliderView
-                android:id="@+id/photoSlider"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                app:sliderIndicatorEnabled="true"
-                app:sliderIndicatorGravity="center|bottom"
-                app:sliderIndicatorRtlMode="on"
-                app:sliderIndicatorMargin="15dp"
-                app:sliderIndicatorOrientation="horizontal"
-                app:sliderIndicatorPadding="3dp"
-                app:sliderIndicatorRadius="2dp"
-                app:sliderIndicatorSelectedColor="#5A5A5A"
-                app:sliderIndicatorUnselectedColor="#FFF" />
-        </com.google.android.material.card.MaterialCardView>
+            app:layout_constraintTop_toBottomOf="@+id/titleTextInput" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/descriptionTextInput"
@@ -102,7 +88,7 @@
             android:layout_marginTop="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sliderContainer">
+            app:layout_constraintTop_toBottomOf="@+id/btnAddPhoto">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/descriptionEditText"
@@ -113,56 +99,64 @@
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/makeLayout"
-            style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
+        <LinearLayout
+            android:id="@+id/dropdowns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
-            android:layout_marginTop="24dp"
-            android:hint="@string/make"
-            app:layout_constraintTop_toBottomOf="@+id/descriptionTextInput">
-
-            <AutoCompleteTextView
-                android:id="@+id/makeDropdown"
+            app:layout_constraintTop_toBottomOf="@id/descriptionTextInput"
+            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="horizontal">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/makeLayout"
+                style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginTop="24dp"
+                android:hint="@string/make"
+                android:layout_weight="1">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/modelLayout"
-            style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
-            android:layout_marginTop="24dp"
-            android:hint="@string/model"
-            app:layout_constraintTop_toBottomOf="@+id/makeLayout">
+                <AutoCompleteTextView
+                    android:id="@+id/makeDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <AutoCompleteTextView
-                android:id="@+id/modelDropdown"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/modelLayout"
+                style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginTop="24dp"
+                android:hint="@string/model"
+                android:layout_weight="1">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/yearLayout"
-            style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
-            android:layout_marginTop="24dp"
-            android:hint="@string/year"
-            app:layout_constraintTop_toBottomOf="@+id/modelLayout">
+                <AutoCompleteTextView
+                    android:id="@+id/modelDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <AutoCompleteTextView
-                android:id="@+id/yearDropdown"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/yearLayout"
+                style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginTop="24dp"
+                android:hint="@string/year"
+                android:layout_weight="1">
+
+                <AutoCompleteTextView
+                    android:id="@+id/yearDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCreateListing"
@@ -173,6 +167,18 @@
             android:text="@string/createListing"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/yearLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/dropdowns" />
+
+        <TextView
+            android:id="@+id/tvImageCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/btnAddPhoto"
+            app:layout_constraintEnd_toStartOf="@+id/btnAddPhoto"
+            app:layout_constraintTop_toTopOf="@+id/btnAddPhoto"
+            android:text="@string/one"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
