@@ -58,6 +58,8 @@ public class ProfileFragment extends Fragment {
         toolbar = view.findViewById(R.id.toolbar);
 
         toolbar.setNavigationIcon(R.drawable.back);
+
+        // Send user to previous fragment
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
