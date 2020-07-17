@@ -29,4 +29,7 @@
     <string name="addPhoto">Add Photo</string>
     <string name="one">1</string>
     <string name="extraInformation">Extra Information</string>
+    <string name="address">Address</string>
+    <string name="priceInput">Price</string>
+    <string name="contact">Contact Information</string>
 </resources>

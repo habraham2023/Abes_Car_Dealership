@@ -18,6 +18,10 @@ public class Listing extends ParseObject {
     public static final String KEY_MAKE = "make";
     public static final String KEY_YEAR = "year";
     public static final String KEY_IMAGES = "images";
+    public static final String KEY_PRICE = "price";
+    public static final String KEY_EXTRA_INFORMATION = "extraInformation";
+    public static final String KEY_CONTACT = "contact";
+    public static final String KEY_ADDRESS = "address";
 
     public static final List<String> listingsFavorited = new ArrayList<>();
 
@@ -73,5 +77,37 @@ public class Listing extends ParseObject {
 
     public void setImages(List<ParseFile> images) {
         put(KEY_IMAGES, images);
+    }
+
+    public int getPrice() {
+        return (int) getNumber(KEY_PRICE);
+    }
+
+    public void setPrice(String price) {
+        put(KEY_PRICE, Integer.parseInt(price));
+    }
+
+    public String getContact() {
+        return getString(KEY_CONTACT);
+    }
+
+    public void setContact(String contact) {
+        put(KEY_CONTACT, contact);
+    }
+
+    public String getExtraInformation() {
+        return getString(KEY_EXTRA_INFORMATION);
+    }
+
+    public void setExtraInformation(String extraInformation) {
+        put(KEY_EXTRA_INFORMATION, extraInformation);
+    }
+
+    public String getAddress() {
+        return getString(KEY_ADDRESS);
+    }
+
+    public void setAddress(String address) {
+        put(KEY_ADDRESS, address);
     }
 }

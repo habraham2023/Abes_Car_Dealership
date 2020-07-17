@@ -75,6 +75,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView tvTitle;
         private TextView tvDescription;
+        private TextView tvPrice;
         private ImageView ivFirstImage;
         private ImageView ivFavorite;
 
@@ -82,6 +83,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDescription = itemView.findViewById(R.id.tvDescription);
+            tvPrice = itemView.findViewById(R.id.tvPrice);
             ivFirstImage = itemView.findViewById(R.id.ivFirstImage);
             ivFavorite = itemView.findViewById(R.id.ivFavorite);
             itemView.setOnClickListener(this);
@@ -90,7 +92,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         public void bind(final Listing listing) {
             tvTitle.setText(listing.getTitle());
             tvDescription.setText(listing.getDescription());
-
+            tvPrice.setText("$"+listing.getPrice());
             if (Listing.listingsFavorited.contains(listing.getObjectId())) {
                 Glide.with(context).load(R.drawable.favorite_fill).into(ivFavorite);
                 ivFavorite.setColorFilter(context.getColor(R.color.secondaryDarkColor));

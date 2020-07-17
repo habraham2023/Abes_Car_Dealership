@@ -67,6 +67,16 @@ public class CreationFragment extends Fragment {
     AutoCompleteTextView yearDropdown;
     MaterialButton btnAddPhoto;
 
+    TextInputLayout priceLayout;
+    TextInputEditText priceEditText;
+    TextInputLayout contactLayout;
+    TextInputEditText contactEditText;
+
+    TextInputLayout extraInformationLayout;
+    TextInputEditText extraInformationEditText;
+    TextInputLayout addressLayout;
+    TextInputEditText addressEditText;
+
     List<ParseFile> photos;
     TextView tvImageCount;
     @Override
@@ -90,6 +100,15 @@ public class CreationFragment extends Fragment {
         yearLayout = view.findViewById(R.id.yearLayout);
         yearDropdown = view.findViewById(R.id.yearDropdown);
         btnAddPhoto = view.findViewById(R.id.btnAddPhoto);
+        priceLayout = view.findViewById(R.id.priceLayout);
+        priceEditText = view.findViewById(R.id.priceEditText);
+        contactLayout = view.findViewById(R.id.contactLayout);
+        contactEditText = view.findViewById(R.id.contactEditText);
+        extraInformationLayout = view.findViewById(R.id.extraInformationLayout);
+        extraInformationEditText = view.findViewById(R.id.extraInformationEditText);
+        addressLayout = view.findViewById(R.id.addressLayout);
+        addressEditText = view.findViewById(R.id.addressEditText);
+
         photos = new ArrayList<>();
         tvImageCount = view.findViewById(R.id.tvImageCount);
         tvImageCount.setText(Integer.toString(photos.size()));
@@ -118,6 +137,15 @@ public class CreationFragment extends Fragment {
         btnCreateListing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                titleInputLayout.setError(null);
+                descriptionInputLayout.setError(null);
+                makeLayout.setError(null);
+                yearLayout.setError(null);
+                priceLayout.setError(null);
+                contactLayout.setError(null);
+                extraInformationLayout.setError(null);
+                addressLayout.setError(null);
+
                 boolean error = false;
 
                 String title = titleEditText.getText().toString();
@@ -135,24 +163,36 @@ public class CreationFragment extends Fragment {
                     makeLayout.setError("Make of listing cannot be empty.");
                     error = true;
                 }
-
                 String year = yearDropdown.getText().toString();
                 if (year.isEmpty()) {
                     yearLayout.setError("Year of listing cannot be empty.");
                     error = true;
                 }
+                String price = priceEditText.getText().toString();
+                if (price.isEmpty()) {
+                    priceLayout.setError("Price of listing cannot be empty.");
+                }
+                String contact = contactEditText.getText().toString();
+                if (contact.isEmpty()) {
+                    contactLayout.setError("Contact Information cannot be empty.");
+                }
+                String extraInformation = extraInformationEditText.getText().toString();
 
+                String address =  addressEditText.getText().toString();
+                if (address.isEmpty()) {
+                    addressLayout.setError("Address cannot be empty");
+                }
                 if (photos.isEmpty()) {
                     Toast.makeText(getContext(), "Listing needs at least one photo.", Toast.LENGTH_SHORT);
                     error = true;
                 }
 
-                if (!error) createListing(title, description, make, year);
+                if (!error) createListing(title, description, make, year, price, contact, extraInformation, address);
             }
         });
     }
 
-    public void createListing(String title, String description, String make, String year) {
+    public void createListing(String title, String description, String make, String year, String price, String contact, String extraInformation, String address) {
         titleInputLayout.setError(null);
         descriptionInputLayout.setError(null);
 
@@ -163,6 +203,10 @@ public class CreationFragment extends Fragment {
         listing.setMake(make);
         listing.setYear(year);
         listing.setImages(photos);
+        listing.setPrice(price);
+        listing.setContact(contact);
+        listing.setExtraInformation(extraInformation);
+        listing.setAddress(address);
 
         listing.saveInBackground(new SaveCallback() {
             @Override
