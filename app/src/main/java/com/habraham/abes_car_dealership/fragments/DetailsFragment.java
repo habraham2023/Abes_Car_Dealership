@@ -35,6 +35,10 @@ public class DetailsFragment extends Fragment {
     Toolbar toolbar;
     TextView tvTitle;
     TextView tvDescription;
+    TextView tvPrice;
+    TextView tvSellerName;
+    TextView tvLocation;
+    TextView tvContact;
     TextView tvExtraInformation;
 
     ImageView ivFavorite;
@@ -74,6 +78,10 @@ public class DetailsFragment extends Fragment {
         toolbar = view.findViewById(R.id.toolbar);
         tvTitle = view.findViewById(R.id.tvTitle);
         tvDescription = view.findViewById(R.id.tvDescription);
+        tvPrice = view.findViewById(R.id.tvPrice);
+        tvSellerName = view.findViewById(R.id.tvSellerName);
+        tvLocation = view.findViewById(R.id.tvLocation);
+        tvContact = view.findViewById(R.id.tvContact);
         tvExtraInformation = view.findViewById(R.id.tvExtraInformation);
         ivFavorite = view.findViewById(R.id.ivFavorite);
 
@@ -88,7 +96,15 @@ public class DetailsFragment extends Fragment {
 
         tvTitle.setText(listing.getTitle());
         tvDescription.setText(listing.getDescription());
-        tvExtraInformation.setText("THIS NEEDS TO BE IMPLEMENTED!");
+        tvPrice.append(" $" + listing.getPrice());
+        tvLocation.append(" " + listing.getAddress());
+        tvContact.append(" " + listing.getContact());
+        try {
+            tvSellerName.append(" " + listing.fetchIfNeeded().getParseUser(Listing.KEY_SELLER).fetchIfNeeded().getString("screenName"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        tvExtraInformation.setText(listing.getExtraInformation());
 
 
         if (Listing.listingsFavorited.contains(listing.getObjectId())) {
