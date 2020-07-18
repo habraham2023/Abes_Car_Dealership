@@ -1,11 +1,6 @@
 package com.habraham.abes_car_dealership.fragments;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
@@ -25,22 +21,22 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
-
 import com.habraham.abes_car_dealership.models.Listing;
+import com.habraham.abes_car_dealership.models.Make;
+import com.habraham.abes_car_dealership.models.Model;
 import com.habraham.abes_car_dealership.rawValues;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,9 +44,8 @@ import static android.app.Activity.RESULT_OK;
 
 
 public class CreationFragment extends Fragment {
-    private static final String TAG = "CreationFragment";
-
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
+    private static final String TAG = "CreationFragment";
     public String photoFileName = "image.jpg";
     protected File photoFile;
 
@@ -63,6 +58,8 @@ public class CreationFragment extends Fragment {
 
     TextInputLayout makeLayout;
     AutoCompleteTextView makeDropdown;
+    TextInputLayout modelLayout;
+    AutoCompleteTextView modelDropdown;
     TextInputLayout yearLayout;
     AutoCompleteTextView yearDropdown;
     MaterialButton btnAddPhoto;
@@ -79,6 +76,9 @@ public class CreationFragment extends Fragment {
 
     List<ParseFile> photos;
     TextView tvImageCount;
+
+    List<Make> makes;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,6 +97,8 @@ public class CreationFragment extends Fragment {
         btnCreateListing = view.findViewById(R.id.btnCreateListing);
         makeLayout = view.findViewById(R.id.makeLayout);
         makeDropdown = view.findViewById(R.id.makeDropdown);
+        modelLayout = view.findViewById(R.id.modelLayout);
+        modelDropdown = view.findViewById(R.id.modelDropdown);
         yearLayout = view.findViewById(R.id.yearLayout);
         yearDropdown = view.findViewById(R.id.yearDropdown);
         btnAddPhoto = view.findViewById(R.id.btnAddPhoto);
@@ -122,8 +124,9 @@ public class CreationFragment extends Fragment {
             }
         });
 
-        makeDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.makes));
-        yearDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.years));
+//        makeDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.makes));
+//        yearDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.years));
+        setMakes();
 
 
         btnAddPhoto.setOnClickListener(new View.OnClickListener() {
@@ -131,6 +134,23 @@ public class CreationFragment extends Fragment {
             public void onClick(View view) {
                 Log.i(TAG, "onClick: " + photos.size());
                 launchCamera();
+            }
+        });
+
+        makeDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                modelDropdown.setText(null);
+                String selection = (String) adapterView.getItemAtPosition(i);
+                Log.i(TAG, "onItemClick: " + selection);
+                setModels(makes.get(i));
+            }
+        });
+
+        modelDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                yearDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.years));
             }
         });
 
@@ -178,7 +198,7 @@ public class CreationFragment extends Fragment {
                 }
                 String extraInformation = extraInformationEditText.getText().toString();
 
-                String address =  addressEditText.getText().toString();
+                String address = addressEditText.getText().toString();
                 if (address.isEmpty()) {
                     addressLayout.setError("Address cannot be empty");
                 }
@@ -187,7 +207,36 @@ public class CreationFragment extends Fragment {
                     error = true;
                 }
 
-                if (!error) createListing(title, description, make, year, price, contact, extraInformation, address);
+                if (!error)
+                    createListing(title, description, make, year, price, contact, extraInformation, address);
+            }
+        });
+    }
+
+    private void setModels(Make make) {
+        List<String> modelNames = new ArrayList<>();
+
+        for (Model model : make.getModels()) {
+            modelNames.add(model.getName());
+        }
+
+        modelDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, modelNames));
+
+    }
+
+    private void setMakes() {
+        ParseQuery<Make> queryMakes = ParseQuery.getQuery(Make.class);
+        queryMakes.orderByAscending(Make.KEY_NAME);
+        queryMakes.include(Make.KEY_MODELS);
+        queryMakes.findInBackground(new FindCallback<Make>() {
+            @Override
+            public void done(List<Make> makes, ParseException e) {
+                CreationFragment.this.makes = makes;
+                List<String> makeNames = new ArrayList<>();
+                for (Make make : makes) {
+                    makeNames.add(make.getName());
+                }
+                makeDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, makeNames));
             }
         });
     }

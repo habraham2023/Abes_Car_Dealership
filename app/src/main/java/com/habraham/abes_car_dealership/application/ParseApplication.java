@@ -5,6 +5,8 @@ import android.app.Application;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
+import com.habraham.abes_car_dealership.models.Make;
+import com.habraham.abes_car_dealership.models.Model;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -19,6 +21,8 @@ public class ParseApplication extends Application {
         // Register Model classes for Parse
         ParseObject.registerSubclass(Listing.class);
         ParseObject.registerSubclass(Favorite.class);
+        ParseObject.registerSubclass(Make.class);
+        ParseObject.registerSubclass(Model.class);
 
         // Use for troubleshooting -- remove this line for production
         Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
