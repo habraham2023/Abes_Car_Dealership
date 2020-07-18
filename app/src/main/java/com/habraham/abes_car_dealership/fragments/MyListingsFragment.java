@@ -84,11 +84,11 @@ public class MyListingsFragment extends Fragment {
         });
     }
 
+    // Get all listings that the user has created
     private void getMyListings() {
-
         ParseQuery<Listing> myListingsQuery = ParseQuery.getQuery(Listing.class);
         myListingsQuery.whereEqualTo(Listing.KEY_SELLER, ParseUser.getCurrentUser());
-
+        myListingsQuery.orderByDescending("createdAt");
         myListingsQuery.findInBackground(new FindCallback<Listing>() {
             @Override
             public void done(List<Listing> listings, ParseException e) {

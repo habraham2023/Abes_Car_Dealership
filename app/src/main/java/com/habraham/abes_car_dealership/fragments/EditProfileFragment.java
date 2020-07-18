@@ -79,6 +79,7 @@ public class EditProfileFragment extends Fragment {
 
         toolbar.setNavigationIcon(R.drawable.back);
 
+        // Send user to previous fragment
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,6 +104,7 @@ public class EditProfileFragment extends Fragment {
             }
         });
 
+        // Save changes made and redirect back to profile fragment
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -167,6 +169,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     @Override
+    // Once image has been taken display preview of it
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
@@ -182,6 +185,7 @@ public class EditProfileFragment extends Fragment {
         }
     }
 
+    // Rotates image so that the picture taken is displayed correctly
     public Bitmap rotateBitmapOrientation(String photoFilePath) {
         // Create and configure BitmapFactory
         BitmapFactory.Options bounds = new BitmapFactory.Options();

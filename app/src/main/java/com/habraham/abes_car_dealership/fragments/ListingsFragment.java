@@ -57,6 +57,7 @@ public class ListingsFragment extends Fragment {
         getListings();
     }
 
+    // Get all initial listings to be displayed
     protected void getListings() {
         Listing.getAllListingsFavorited(new FindCallback<Favorite>() {
             @Override
@@ -67,7 +68,7 @@ public class ListingsFragment extends Fragment {
                 }
                 Log.i(TAG, "done: " + Listing.listingsFavorited);
                 ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
-
+                query.orderByDescending("createdAt");
                 query.findInBackground(new FindCallback<Listing>() {
                     @Override
                     public void done(List<Listing> newListings, ParseException e) {
