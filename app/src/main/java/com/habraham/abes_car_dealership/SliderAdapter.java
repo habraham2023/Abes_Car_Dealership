@@ -56,7 +56,11 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
         }
 
         void setImage(SliderItem sliderItem) {
-            Glide.with(context).load(sliderItem.getImageUrl()).into(imageView);
+            if (sliderItem.getImageUrl() != null) {
+                Glide.with(context).load(sliderItem.getImageUrl()).into(imageView);
+            } else {
+                Glide.with(context).load(sliderItem.getBitmap()).into(imageView);
+            }
         }
     }
 }

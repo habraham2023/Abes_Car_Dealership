@@ -1,6 +1,10 @@
 package com.habraham.abes_car_dealership.fragments;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,11 +24,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.CompositePageTransformer;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.SliderAdapter;
+import com.habraham.abes_car_dealership.SliderItem;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.habraham.abes_car_dealership.models.Make;
 import com.habraham.abes_car_dealership.models.Model;
@@ -35,8 +45,10 @@ import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,9 +87,13 @@ public class CreationFragment extends Fragment {
     TextInputEditText addressEditText;
 
     List<ParseFile> photos;
-    TextView tvImageCount;
-
     List<Make> makes;
+
+    ViewPager2 viewPager2;
+    DotsIndicator dotsIndicator;
+    SliderAdapter sliderAdapter;
+    List<SliderItem> sliderItems;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -110,10 +126,11 @@ public class CreationFragment extends Fragment {
         extraInformationEditText = view.findViewById(R.id.extraInformationEditText);
         addressLayout = view.findViewById(R.id.addressLayout);
         addressEditText = view.findViewById(R.id.addressEditText);
+        viewPager2 = view.findViewById(R.id.slider);
+        dotsIndicator = view.findViewById(R.id.dots_indicator);
 
         photos = new ArrayList<>();
-        tvImageCount = view.findViewById(R.id.tvImageCount);
-        tvImageCount.setText(Integer.toString(photos.size()));
+        sliderItems = new ArrayList<>();
 
         toolbar.setNavigationIcon(R.drawable.back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -211,6 +228,26 @@ public class CreationFragment extends Fragment {
                     createListing(title, description, make, year, price, contact, extraInformation, address);
             }
         });
+
+        sliderAdapter = new SliderAdapter(getContext(), sliderItems, viewPager2);
+        viewPager2.setAdapter(sliderAdapter);
+        dotsIndicator.setViewPager2(viewPager2);
+
+        viewPager2.setClipToPadding(false);
+        viewPager2.setClipChildren(false);
+        viewPager2.setOffscreenPageLimit(3);
+        viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
+
+        CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+        compositePageTransformer.addTransformer(new MarginPageTransformer(40));
+        compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
+            @Override
+            public void transformPage(@NonNull View page, float position) {
+                float r = 1 - Math.abs(position);
+                page.setScaleY(0.85f + r  * 0.15f);
+            }
+        });
+        viewPager2.setPageTransformer(compositePageTransformer);
     }
 
     private void setModels(Make make) {
@@ -302,14 +339,47 @@ public class CreationFragment extends Fragment {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 // by this point we have the camera photo on disk
-                // Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+                Bitmap takenImage = rotateBitmapOrientation(photoFile.getAbsolutePath());
                 // RESIZE BITMAP, see section below
                 // Load the taken image into a preview
+                sliderItems.add(new SliderItem(takenImage));
+                sliderAdapter.notifyItemInserted(sliderItems.size());
+                dotsIndicator.setViewPager2(viewPager2);
+                viewPager2.setCurrentItem(sliderItems.size()-1, true);
                 photos.add(new ParseFile(photoFile));
-                tvImageCount.setText(Integer.toString(photos.size()));
+
             } else { // Result was a failure
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    // Rotates image so that the picture taken is displayed correctly
+    public Bitmap rotateBitmapOrientation(String photoFilePath) {
+        // Create and configure BitmapFactory
+        BitmapFactory.Options bounds = new BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(photoFilePath, bounds);
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        Bitmap bm = BitmapFactory.decodeFile(photoFilePath, opts);
+        // Read EXIF Data
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(photoFilePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+        int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
+        int rotationAngle = 0;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+        // Rotate Bitmap
+        Matrix matrix = new Matrix();
+        matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+        // Return result
+        return rotatedBitmap;
     }
 }
