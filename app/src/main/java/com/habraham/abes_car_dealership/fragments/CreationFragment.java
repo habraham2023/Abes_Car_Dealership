@@ -42,15 +42,26 @@ import com.habraham.abes_car_dealership.rawValues;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -59,7 +70,7 @@ public class CreationFragment extends Fragment {
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
     private static final String TAG = "CreationFragment";
     public String photoFileName = "image";
-        protected File photoFile;
+    protected File photoFile;
 
     Toolbar toolbar;
     TextInputLayout titleInputLayout;
@@ -94,6 +105,8 @@ public class CreationFragment extends Fragment {
     SliderAdapter sliderAdapter;
     List<SliderItem> sliderItems;
 
+    OkHttpClient client = new OkHttpClient();
+    private String url = "https://maps.googleapis.com/maps/api/geocode/json";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -244,7 +257,7 @@ public class CreationFragment extends Fragment {
             @Override
             public void transformPage(@NonNull View page, float position) {
                 float r = 1 - Math.abs(position);
-                page.setScaleY(0.85f + r  * 0.15f);
+                page.setScaleY(0.85f + r * 0.15f);
             }
         });
         viewPager2.setPageTransformer(compositePageTransformer);
@@ -282,7 +295,7 @@ public class CreationFragment extends Fragment {
         titleInputLayout.setError(null);
         descriptionInputLayout.setError(null);
 
-        Listing listing = new Listing();
+        final Listing listing = new Listing();
         listing.setTitle(title);
         listing.setDescription(description);
         listing.setSeller(ParseUser.getCurrentUser());
@@ -292,13 +305,52 @@ public class CreationFragment extends Fragment {
         listing.setPrice(price);
         listing.setContact(contact);
         listing.setExtraInformation(extraInformation);
-        listing.setAddress(address);
 
-        listing.saveInBackground(new SaveCallback() {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+        urlBuilder.addQueryParameter("key", getString(R.string.googleKey));
+        urlBuilder.addQueryParameter("address", address);
+        String fullURL = urlBuilder.build().toString();
+        Log.i(TAG, "createListing: " + fullURL);
+        Request request = new Request.Builder()
+                .url(fullURL)
+                .build();
+
+
+        // Make API call for formatted address and GeoPoint
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void done(ParseException e) {
-                getActivity().getSupportFragmentManager().beginTransaction().remove(CreationFragment.this).commit();
-                getActivity().getSupportFragmentManager().popBackStack();
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure: ", e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    String responseData = response.body().string();
+
+                    JSONObject jsonObject = new JSONObject(responseData);
+                    JSONObject result = jsonObject.getJSONArray("results").getJSONObject(0);
+                    String formattedAddress = result.getString("formatted_address");
+                    Log.i(TAG, "onResponse: " + formattedAddress);
+                    listing.setAddress(formattedAddress);
+                    JSONObject location = result.getJSONObject("geometry").getJSONObject("location");
+                    double lat = location.getDouble("lat");
+                    double lng = location.getDouble("lng");
+
+                    ParseGeoPoint geoPoint = new ParseGeoPoint(lat, lng);
+                    listing.setLatLng(geoPoint);
+
+                    Log.i(TAG, "onResponse: " + lat + " " + lng);
+                    listing.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            getActivity().getSupportFragmentManager().beginTransaction().remove(CreationFragment.this).commit();
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -345,7 +397,7 @@ public class CreationFragment extends Fragment {
                 sliderItems.add(new SliderItem(takenImage));
                 sliderAdapter.notifyItemInserted(sliderItems.size());
                 dotsIndicator.setViewPager2(viewPager2);
-                viewPager2.setCurrentItem(sliderItems.size()-1, true);
+                viewPager2.setCurrentItem(sliderItems.size() - 1, true);
                 photos.add(new ParseFile(photoFile));
 
             } else { // Result was a failure

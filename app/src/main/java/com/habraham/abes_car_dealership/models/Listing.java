@@ -3,6 +3,7 @@ package com.habraham.abes_car_dealership.models;
 import com.parse.FindCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -22,6 +23,7 @@ public class Listing extends ParseObject {
     public static final String KEY_EXTRA_INFORMATION = "extraInformation";
     public static final String KEY_CONTACT = "contact";
     public static final String KEY_ADDRESS = "address";
+    public static final String KEY_LAT_LNG = "latLng";
 
     public static final List<String> listingsFavorited = new ArrayList<>();
 
@@ -109,5 +111,13 @@ public class Listing extends ParseObject {
 
     public void setAddress(String address) {
         put(KEY_ADDRESS, address);
+    }
+
+    public ParseGeoPoint getLatLng() {
+        return getParseGeoPoint(KEY_LAT_LNG);
+    }
+
+    public void setLatLng(ParseGeoPoint latLng) {
+        put(KEY_LAT_LNG, latLng);
     }
 }
