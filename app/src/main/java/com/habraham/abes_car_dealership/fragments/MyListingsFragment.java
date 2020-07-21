@@ -56,7 +56,7 @@ public class MyListingsFragment extends Fragment {
         fabAddListing  = view.findViewById(R.id.fabAddListing);
 
         myListings = new ArrayList<>();
-        adapter = new ListingsAdapter(getContext(), myListings);
+        adapter = new ListingsAdapter(getContext(), myListings, null);
         rvMyListings.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMyListings.setAdapter(adapter);
 

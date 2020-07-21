@@ -2,6 +2,7 @@ package com.habraham.abes_car_dealership.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Location;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,13 +15,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.model.LatLng;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.fragments.DetailsFragment;
+import com.habraham.abes_car_dealership.fragments.ListingsFragment;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.parse.DeleteCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -29,13 +33,15 @@ import java.util.List;
 
 public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHolder> {
     private static final String TAG = "ListingsAdapter";
-
+    private static final double METERS_TO_MILES = 0.00062137f;
     private Context context;
     private List<Listing> listings;
+    private Location location;
 
-    public ListingsAdapter(Context context, List<Listing> listings) {
+    public ListingsAdapter(Context context, List<Listing> listings, Location location) {
         this.context = context;
         this.listings = listings;
+        this.location = location;
     }
 
     @NonNull
@@ -76,6 +82,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         private TextView tvTitle;
         private TextView tvDescription;
         private TextView tvPrice;
+        private TextView tvDistance;
         private ImageView ivFirstImage;
         private ImageView ivFavorite;
 
@@ -84,6 +91,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvPrice = itemView.findViewById(R.id.tvPrice);
+            tvDistance = itemView.findViewById(R.id.tvDistance);
             ivFirstImage = itemView.findViewById(R.id.ivFirstImage);
             ivFavorite = itemView.findViewById(R.id.ivFavorite);
             itemView.setOnClickListener(this);
@@ -149,6 +157,21 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
                     });
                 }
             });
+
+            if (location != null) {
+                double distance = 0;
+                ParseGeoPoint sellerLocation = listing.getLatLng();
+                if (sellerLocation != null) {
+                    Location destination = new Location("destination");
+                    destination.setLatitude(sellerLocation.getLatitude());
+                    destination.setLongitude(sellerLocation.getLongitude());
+                    distance = location.distanceTo(destination) * METERS_TO_MILES;
+                    Log.i(TAG, "onClick: " + distance);
+
+                    String result = String.format(" %.2fmi", distance);
+                    tvDistance.setText(result);
+                }
+            }
         }
 
         @Override

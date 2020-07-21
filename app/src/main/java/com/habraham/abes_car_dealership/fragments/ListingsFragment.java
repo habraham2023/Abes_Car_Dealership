@@ -3,6 +3,7 @@ package com.habraham.abes_car_dealership.fragments;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -43,7 +44,7 @@ public class ListingsFragment extends Fragment {
     Toolbar toolbar;
     RecyclerView rvListings;
     protected ListingsAdapter adapter;
-    LatLng location;
+    public Location location = new Location("location");
 
     public ListingsFragment() {
         // Required empty public constructor
@@ -63,7 +64,7 @@ public class ListingsFragment extends Fragment {
         toolbar = view.findViewById(R.id.toolbar);
         rvListings = view.findViewById(R.id.rvListings);
 
-        adapter = new ListingsAdapter(getContext(), new ArrayList<Listing>());
+        adapter = new ListingsAdapter(getContext(), new ArrayList<Listing>(), location);
         rvListings.setLayoutManager(new LinearLayoutManager(getContext()));
         rvListings.setAdapter(adapter);
 
@@ -113,7 +114,8 @@ public class ListingsFragment extends Fragment {
                             int latestLocationIndex = locationResult.getLocations().size()-1;
                             double latitude = locationResult.getLocations().get(latestLocationIndex).getLatitude();
                             double longitude = locationResult.getLocations().get(latestLocationIndex).getLongitude();
-                            location = new LatLng(latitude, longitude);
+                            location.setLatitude(latitude);
+                            location.setLongitude(longitude);
                             Log.i(TAG, "onLocationResult: " + location);
                         }
                     }
