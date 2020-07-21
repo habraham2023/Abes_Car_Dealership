@@ -20,9 +20,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.SliderAdapter;
 import com.habraham.abes_car_dealership.SliderItem;
+import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.parse.DeleteCallback;
@@ -51,6 +53,7 @@ public class DetailsFragment extends Fragment {
     TextView tvLocation;
     TextView tvContact;
     TextView tvExtraInformation;
+    FloatingActionButton fabAddChat;
 
     ImageView ivFavorite;
     ViewPager2 viewPager2;
@@ -98,6 +101,7 @@ public class DetailsFragment extends Fragment {
         tvContact = view.findViewById(R.id.tvContact);
         tvExtraInformation = view.findViewById(R.id.tvExtraInformation);
         ivFavorite = view.findViewById(R.id.ivFavorite);
+        fabAddChat = view.findViewById(R.id.fabAddChat);
         viewPager2 = view.findViewById(R.id.slider);
         dotsIndicator = view.findViewById(R.id.dots_indicator);
 
@@ -177,6 +181,72 @@ public class DetailsFragment extends Fragment {
             }
         });
 
+        fabAddChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final ParseUser user = ParseUser.getCurrentUser();
+                final List<Chat> chats = (ArrayList<Chat>) user.get("chats");
+                if (chats != null) {
+                    Log.i(TAG, "onClick: " + chats);
+                    // Try and find an existing matching chat
+                    for (Chat chat : chats) {
+                        try {
+                            if (chat.isEqual(user, listing.getSeller(), listing)) {
+                                Log.i(TAG, "onClick: Chat exists");
+                                ChatFragment chatFragment = ChatFragment.newInstance(chat);
+                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, chatFragment).addToBackStack(null).commit();
+                                return;
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+                    }
+
+                    // If no existing chat exists add a new one to the existing chats ArrayList
+                    final Chat chat = new Chat();
+                    chat.setInitiator(user);
+                    chat.setContacted(listing.getSeller());
+                    chat.setListing(listing);
+                    chat.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            chats.add(chat);
+                            user.put("chats", chats);
+                            user.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    ChatFragment chatFragment = ChatFragment.newInstance(chat);
+                                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, chatFragment).addToBackStack(null).commit();
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    // Create a new chats ArrayList and add a Chat object to it
+                    final Chat chat = new Chat();
+                    chat.setInitiator(user);
+                    chat.setContacted(listing.getSeller());
+                    chat.setListing(listing);
+                    chat.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            List<Chat> newChats = new ArrayList<>();
+                            newChats.add(chat);
+                            user.put("chats", newChats);
+                            user.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    ChatFragment chatFragment = ChatFragment.newInstance(chat);
+                                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, chatFragment).addToBackStack(null).commit();
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
+
         setSliderItems();
         SliderAdapter sliderAdapter = new SliderAdapter(getContext(), sliderItems, viewPager2);
         viewPager2.setAdapter(sliderAdapter);
@@ -193,7 +263,7 @@ public class DetailsFragment extends Fragment {
             @Override
             public void transformPage(@NonNull View page, float position) {
                 float r = 1 - Math.abs(position);
-                page.setScaleY(0.85f + r  * 0.15f);
+                page.setScaleY(0.85f + r * 0.15f);
             }
         });
         viewPager2.setPageTransformer(compositePageTransformer);

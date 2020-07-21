@@ -3,6 +3,7 @@ package com.habraham.abes_car_dealership.application;
 import android.app.Application;
 
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.habraham.abes_car_dealership.models.Make;
@@ -21,6 +22,7 @@ public class ParseApplication extends Application {
         // Register Model classes for Parse
         ParseObject.registerSubclass(Listing.class);
         ParseObject.registerSubclass(Favorite.class);
+        ParseObject.registerSubclass(Chat.class);
         ParseObject.registerSubclass(Make.class);
         ParseObject.registerSubclass(Model.class);
 

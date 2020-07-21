@@ -35,4 +35,6 @@
     <string name="tvPrice">Price:</string>
     <string name="tvContact">Contact:</string>
     <string name="tvLocation">Location:</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
