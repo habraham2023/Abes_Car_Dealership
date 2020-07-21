@@ -17,11 +17,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.material.button.MaterialButton;
-import com.habraham.abes_car_dealership.OnboardingActivity;
+import com.habraham.abes_car_dealership.activities.OnboardingActivity;
 import com.habraham.abes_car_dealership.R;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 

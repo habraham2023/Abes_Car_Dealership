@@ -2,6 +2,7 @@ package com.habraham.abes_car_dealership.models;
 
 import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;

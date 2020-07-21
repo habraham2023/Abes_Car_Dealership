@@ -1,4 +1,4 @@
-package com.habraham.abes_car_dealership;
+package com.habraham.abes_car_dealership.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
-import com.parse.ParseUser;
+import com.habraham.abes_car_dealership.R;
 
 public class OnboardingActivity extends AppCompatActivity {
     private static final String TAG = "OnboardingActivity";

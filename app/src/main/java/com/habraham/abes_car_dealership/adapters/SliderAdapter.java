@@ -1,4 +1,4 @@
-package com.habraham.abes_car_dealership;
+package com.habraham.abes_car_dealership.adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
+import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.SliderItem;
 
 import java.util.List;
 

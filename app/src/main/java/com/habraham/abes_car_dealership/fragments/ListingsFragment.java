@@ -24,8 +24,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
-import com.habraham.abes_car_dealership.MainActivity;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.ListingsAdapter;
 import com.habraham.abes_car_dealership.models.Favorite;

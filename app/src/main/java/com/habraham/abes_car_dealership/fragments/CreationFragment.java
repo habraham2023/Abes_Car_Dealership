@@ -17,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,11 +30,10 @@ import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.progressindicator.ProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
-import com.habraham.abes_car_dealership.SliderAdapter;
+import com.habraham.abes_car_dealership.adapters.SliderAdapter;
 import com.habraham.abes_car_dealership.SliderItem;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.habraham.abes_car_dealership.models.Make;

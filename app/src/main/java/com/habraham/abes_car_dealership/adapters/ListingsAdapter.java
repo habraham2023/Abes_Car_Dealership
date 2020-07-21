@@ -15,10 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.maps.model.LatLng;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.fragments.DetailsFragment;
-import com.habraham.abes_car_dealership.fragments.ListingsFragment;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.parse.DeleteCallback;

@@ -1,4 +1,4 @@
-package com.habraham.abes_car_dealership;
+package com.habraham.abes_car_dealership.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.fragments.ChatsFragment;
 import com.habraham.abes_car_dealership.fragments.FavoritesFragment;
 import com.habraham.abes_car_dealership.fragments.ListingsFragment;

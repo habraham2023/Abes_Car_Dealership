@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habraham.abes_car_dealership.R;
-import com.habraham.abes_car_dealership.SliderAdapter;
+import com.habraham.abes_car_dealership.adapters.SliderAdapter;
 import com.habraham.abes_car_dealership.SliderItem;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
