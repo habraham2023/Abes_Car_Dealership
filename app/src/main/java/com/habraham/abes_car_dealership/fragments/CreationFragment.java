@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.ProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
@@ -105,6 +107,8 @@ public class CreationFragment extends Fragment {
     SliderAdapter sliderAdapter;
     List<SliderItem> sliderItems;
 
+    ProgressBar progressBar;
+
     OkHttpClient client = new OkHttpClient();
     private String url = "https://maps.googleapis.com/maps/api/geocode/json";
 
@@ -141,6 +145,7 @@ public class CreationFragment extends Fragment {
         addressEditText = view.findViewById(R.id.addressEditText);
         viewPager2 = view.findViewById(R.id.slider);
         dotsIndicator = view.findViewById(R.id.dots_indicator);
+        progressBar = view.findViewById(R.id.progressBar);
 
         photos = new ArrayList<>();
         sliderItems = new ArrayList<>();
@@ -154,10 +159,7 @@ public class CreationFragment extends Fragment {
             }
         });
 
-//        makeDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.makes));
-//        yearDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.years));
         setMakes();
-
 
         btnAddPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,6 +197,7 @@ public class CreationFragment extends Fragment {
                 contactLayout.setError(null);
                 extraInformationLayout.setError(null);
                 addressLayout.setError(null);
+                progressBar.setVisibility(View.VISIBLE);
 
                 boolean error = false;
 
@@ -321,6 +324,7 @@ public class CreationFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure: ", e);
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -346,10 +350,12 @@ public class CreationFragment extends Fragment {
                         public void done(ParseException e) {
                             getActivity().getSupportFragmentManager().beginTransaction().remove(CreationFragment.this).commit();
                             getActivity().getSupportFragmentManager().popBackStack();
+                            progressBar.setVisibility(View.GONE);
                         }
                     });
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    progressBar.setVisibility(View.GONE);
                 }
             }
         });
