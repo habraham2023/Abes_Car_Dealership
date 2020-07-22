@@ -25,7 +25,7 @@ public class FavoritesFragment extends ListingsFragment {
     protected void getListings() {
         Log.i(TAG, "getListings: " + Listing.listingsFavorited);
         ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
-
+        query.orderByDescending("createdAt");
         query.findInBackground(new FindCallback<Listing>() {
             @Override
             public void done(List<Listing> listings, ParseException e) {

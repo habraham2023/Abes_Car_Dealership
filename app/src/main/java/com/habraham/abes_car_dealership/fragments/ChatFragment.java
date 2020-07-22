@@ -1,6 +1,13 @@
 package com.habraham.abes_car_dealership.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,11 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.MessageAdapter;
 import com.habraham.abes_car_dealership.models.Chat;
@@ -21,20 +23,26 @@ import com.habraham.abes_car_dealership.models.Message;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.livequery.ParseLiveQueryClient;
+import com.parse.livequery.SubscriptionHandling;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
 public class ChatFragment extends Fragment {
     private static final String TAG = "ChatFragment";
     private static final String ARG_CHAT = "chat";
-
-    private Chat chat;
-
+    final List<Message> messages = new ArrayList<>();
     RecyclerView rvMessages;
     MessageAdapter adapter;
-
+    EditText etMessage;
+    ImageButton send;
     Toolbar toolbar;
+    private Chat chat;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -47,6 +55,7 @@ public class ChatFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -66,6 +75,9 @@ public class ChatFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         rvMessages = view.findViewById(R.id.rvMessages);
+        etMessage = view.findViewById(R.id.etMessage);
+        send = view.findViewById(R.id.send);
+
         toolbar = view.findViewById(R.id.toolbar);
 
         toolbar.setNavigationIcon(R.drawable.back);
@@ -80,14 +92,55 @@ public class ChatFragment extends Fragment {
         chat.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject fetchedChat, ParseException e) {
-                List<Message> messages = ((Chat)fetchedChat).getChatLog();
-                Log.i(TAG, "done: " + messages);
+                List<Message> initMessages = ((Chat) fetchedChat).getChatLog();
+                Log.i(TAG, "done: " + initMessages);
 
-                if (messages == null) messages = new ArrayList<>();
+                if (initMessages != null) messages.addAll(initMessages);
 
                 adapter = new MessageAdapter(getContext(), messages);
-                rvMessages.setLayoutManager(new LinearLayoutManager(getContext()));
+                final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+                linearLayoutManager.setReverseLayout(true);
+                linearLayoutManager.setStackFromEnd(true);
+
+                rvMessages.setLayoutManager(linearLayoutManager);
                 rvMessages.setAdapter(adapter);
+            }
+        });
+
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String data = etMessage.getText().toString();
+                final Message message = new Message();
+                message.setUser(ParseUser.getCurrentUser());
+                message.setMessage(data);
+                message.saveInBackground();
+                etMessage.setText(null);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+            }
+        });
+
+
+        ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
+
+        ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
+
+        SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+
+        subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Message>() {
+            @Override
+            public void onEvent(ParseQuery<Message> query, Message object) {
+                messages.add(0, object);
+                chat.put(Chat.KEY_CHAT_LOG, messages);
+                chat.saveInBackground();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                        rvMessages.scrollToPosition(0);
+                    }
+                });
             }
         });
     }

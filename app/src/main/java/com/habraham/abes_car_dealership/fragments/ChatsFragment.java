@@ -44,6 +44,9 @@ public class ChatsFragment extends Fragment {
 
         rvChats = view.findViewById(R.id.rvChats);
         chats = ParseUser.getCurrentUser().getList("chats");
+
+        if (chats == null) chats = new ArrayList<>();
+
         chatsAdapter = new ChatsAdapter(getContext(), chats);
         rvChats.setLayoutManager(new LinearLayoutManager(getContext()));
         rvChats.setAdapter(chatsAdapter);

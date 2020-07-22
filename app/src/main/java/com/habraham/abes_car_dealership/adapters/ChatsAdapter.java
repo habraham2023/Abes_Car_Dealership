@@ -16,6 +16,7 @@ import com.habraham.abes_car_dealership.activities.MainActivity;
 import com.habraham.abes_car_dealership.fragments.ChatFragment;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Listing;
+import com.habraham.abes_car_dealership.models.Message;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -84,6 +85,12 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
                                     tvSellerName.setText(((ParseUser) fetchedUser).getUsername());
                                 }
                             });
+                        }
+                    });
+                    ((Chat) fetchedChat).getChatLog().get(0).fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+                        @Override
+                        public void done(ParseObject fetchedMessage, ParseException e) {
+                            tvLastMessage.setText(((Message) fetchedMessage).getMessage());
                         }
                     });
                     tvTime.setText(setTime(fetchedChat.getUpdatedAt().toString()));

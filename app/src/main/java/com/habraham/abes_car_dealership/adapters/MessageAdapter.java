@@ -69,7 +69,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     String message = ((Message) fetchMessage).getMessage();
                     Log.i(TAG, "done: " + message);
                     tvMessage.setText(message);
-                    ((Message) fetchMessage).getUser().fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+                    ((Message) fetchMessage).getUser().fetchInBackground(new GetCallback<ParseObject>() {
                         @Override
                         public void done(ParseObject fetchedUser, ParseException e) {
                             String fetchedId = ((ParseUser) fetchedUser).getObjectId();
@@ -85,7 +85,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     });
                 }
             });
-
         }
     }
 }
