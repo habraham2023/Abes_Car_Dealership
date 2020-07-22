@@ -120,7 +120,9 @@ public class DetailsFragment extends Fragment {
         tvLocation.append(" " + listing.getAddress());
         tvContact.append(" " + listing.getContact());
         try {
-            tvSellerName.append(" " + listing.fetchIfNeeded().getParseUser(Listing.KEY_SELLER).fetchIfNeeded().getString("screenName"));
+            ParseUser user = listing.fetchIfNeeded().getParseUser(Listing.KEY_SELLER);
+            tvSellerName.append(" " + user.fetchIfNeeded().getString("screenName"));
+            if (user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) fabAddChat.setVisibility(View.GONE);
         } catch (ParseException e) {
             e.printStackTrace();
         }

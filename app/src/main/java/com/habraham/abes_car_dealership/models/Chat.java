@@ -7,11 +7,14 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import java.util.List;
+
 @ParseClassName("Chat")
 public class Chat extends ParseObject {
     public static final String KEY_INITIATOR = "initiator";
     public static final String KEY_CONTACTED = "contacted";
     public static final String KEY_LISTING = "listing";
+    public static final String KEY_CHAT_LOG = "chatLog";
 
     public ParseUser getInitiator() throws ParseException {
         return fetchIfNeeded().getParseUser(KEY_INITIATOR);
@@ -35,6 +38,14 @@ public class Chat extends ParseObject {
 
     public void setListing(Listing listing) {
         put(KEY_LISTING, listing);
+    }
+
+    public List<Message> getChatLog() {
+        return getList(KEY_CHAT_LOG);
+    }
+
+    public void setChatLog(List<Message> messages) {
+        put(KEY_CHAT_LOG, messages);
     }
 
     public boolean isEqual(ParseUser initiator, ParseUser contacted, Listing listing) throws ParseException {
