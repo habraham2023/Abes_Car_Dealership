@@ -8,6 +8,7 @@ import com.parse.ParseUser;
 public class Message extends ParseObject {
     public static final String KEY_USER = "user";
     public static final String KEY_MESSAGE = "message";
+    public static final String KEY_CHAT_ID = "chatID";
 
     public ParseUser getUser() {
         return getParseUser(KEY_USER);
@@ -23,5 +24,13 @@ public class Message extends ParseObject {
 
     public void setMessage(String message) {
         put(KEY_MESSAGE, message);
+    }
+
+    public String getChatID() {
+        return getString(KEY_CHAT_ID);
+    }
+
+    public void setChatID(String chatID) {
+        put(KEY_CHAT_ID, chatID);
     }
 }

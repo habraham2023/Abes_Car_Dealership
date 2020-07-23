@@ -115,6 +115,7 @@ public class ChatFragment extends Fragment {
                 final Message message = new Message();
                 message.setUser(ParseUser.getCurrentUser());
                 message.setMessage(data);
+                message.setChatID(chat.getObjectId());
                 message.saveInBackground();
                 etMessage.setText(null);
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
@@ -126,7 +127,7 @@ public class ChatFragment extends Fragment {
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
 
         ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
-
+        parseQuery.whereEqualTo(Message.KEY_CHAT_ID, chat.getObjectId());
         SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
 
         subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Message>() {
