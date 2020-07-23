@@ -56,6 +56,16 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
         return chats.size();
     }
 
+    public void clear() {
+        chats.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addAll(List<Chat> chats) {
+        this.chats.addAll(chats);
+        notifyDataSetChanged();
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tvSellerName;
         TextView tvListingTitle;

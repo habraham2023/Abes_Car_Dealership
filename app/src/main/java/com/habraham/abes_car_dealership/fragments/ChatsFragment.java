@@ -26,8 +26,8 @@ public class ChatsFragment extends Fragment {
     private static final String TAG = "ChatsFragment";
 
     RecyclerView rvChats;
-    ChatsAdapter chatsAdapter;
     List<Chat> chats;
+    ChatsAdapter chatsAdapter;
 
     public ChatsFragment() {
         // Required empty public constructor
@@ -43,26 +43,35 @@ public class ChatsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         rvChats = view.findViewById(R.id.rvChats);
-        chats = ParseUser.getCurrentUser().getList("chats");
 
-        if (chats == null) chats = new ArrayList<>();
+        chats = new ArrayList<>();
+        chatsAdapter = new ChatsAdapter(getContext(), chats);
 
-        getMissingChats();
+        getChats();
     }
 
-    private void getMissingChats() {
-        ParseQuery<Chat> missingChatsQuery = ParseQuery.getQuery(Chat.class);
-        missingChatsQuery.whereEqualTo(Chat.KEY_CONTACTED, ParseUser.getCurrentUser());
-        for (Chat chat : chats) {
-            missingChatsQuery.whereNotEqualTo(Chat.KEY_OBJECT_ID, chat.getObjectId());
-        }
-        missingChatsQuery.findInBackground(new FindCallback<Chat>() {
+    private void getChats() {
+        chatsAdapter.clear();
+        ParseQuery<Chat> contactedQuery = ParseQuery.getQuery(Chat.class);
+        contactedQuery.whereEqualTo(Chat.KEY_CONTACTED, ParseUser.getCurrentUser());
+
+        ParseQuery<Chat> initiateQuery = ParseQuery.getQuery(Chat.class);
+        initiateQuery.whereEqualTo(Chat.KEY_INITIATOR, ParseUser.getCurrentUser());
+
+        List<ParseQuery<Chat>> queries = new ArrayList<ParseQuery<Chat>>();
+        queries.add(contactedQuery);
+        queries.add(initiateQuery);
+
+        ParseQuery<Chat> mainQuery = ParseQuery.or(queries);
+        mainQuery.include(Chat.KEY_CHAT_LOG);
+        mainQuery.include(Chat.KEY_INITIATOR);
+        mainQuery.include(Chat.KEY_CONTACTED);
+        mainQuery.orderByDescending(Chat.KEY_UPDATED_AT);
+        mainQuery.findInBackground(new FindCallback<Chat>() {
             @Override
             public void done(List<Chat> mChats, ParseException e) {
-                chats.addAll(mChats);
-                chatsAdapter = new ChatsAdapter(getContext(), chats);
+                chatsAdapter.addAll(mChats);
                 rvChats.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvChats.setAdapter(chatsAdapter);
             }
