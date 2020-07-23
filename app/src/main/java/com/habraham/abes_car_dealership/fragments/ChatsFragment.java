@@ -1,6 +1,9 @@
 package com.habraham.abes_car_dealership.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,14 +11,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.ChatsAdapter;
 import com.habraham.abes_car_dealership.models.Chat;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class ChatsFragment extends Fragment {
     RecyclerView rvChats;
     ChatsAdapter chatsAdapter;
     List<Chat> chats;
+
     public ChatsFragment() {
         // Required empty public constructor
     }
@@ -47,8 +49,23 @@ public class ChatsFragment extends Fragment {
 
         if (chats == null) chats = new ArrayList<>();
 
-        chatsAdapter = new ChatsAdapter(getContext(), chats);
-        rvChats.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvChats.setAdapter(chatsAdapter);
+        getMissingChats();
+    }
+
+    private void getMissingChats() {
+        ParseQuery<Chat> missingChatsQuery = ParseQuery.getQuery(Chat.class);
+        missingChatsQuery.whereEqualTo(Chat.KEY_CONTACTED, ParseUser.getCurrentUser());
+        for (Chat chat : chats) {
+            missingChatsQuery.whereNotEqualTo(Chat.KEY_OBJECT_ID, chat.getObjectId());
+        }
+        missingChatsQuery.findInBackground(new FindCallback<Chat>() {
+            @Override
+            public void done(List<Chat> mChats, ParseException e) {
+                chats.addAll(mChats);
+                chatsAdapter = new ChatsAdapter(getContext(), chats);
+                rvChats.setLayoutManager(new LinearLayoutManager(getContext()));
+                rvChats.setAdapter(chatsAdapter);
+            }
+        });
     }
 }

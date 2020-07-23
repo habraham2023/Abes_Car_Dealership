@@ -41,6 +41,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Log.i(TAG, "onBindViewHolder: " + position);
         Message message = messages.get(position);
         holder.bind(message);
     }
@@ -67,7 +68,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 @Override
                 public void done(ParseObject fetchMessage, ParseException e) {
                     String message = ((Message) fetchMessage).getMessage();
-                    Log.i(TAG, "done: " + message);
                     tvMessage.setText(message);
                     ((Message) fetchMessage).getUser().fetchInBackground(new GetCallback<ParseObject>() {
                         @Override
@@ -76,9 +76,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                             String userId = ParseUser.getCurrentUser().getObjectId();
                             if (fetchedId.equals(userId)) {
                                 ivMe.setVisibility(View.VISIBLE);
+                                ivOther.setVisibility(View.GONE);
                                 Glide.with(context).load(((ParseUser) fetchedUser).getParseFile("profilePicture").getUrl()).into(ivMe);
                             } else {
                                 ivOther.setVisibility(View.VISIBLE);
+                                ivMe.setVisibility(View.GONE);
                                 Glide.with(context).load(((ParseUser) fetchedUser).getParseFile("profilePicture").getUrl()).into(ivOther);
                             }
                         }

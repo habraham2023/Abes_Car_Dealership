@@ -87,12 +87,13 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
                             });
                         }
                     });
-                    ((Chat) fetchedChat).getChatLog().get(0).fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-                        @Override
-                        public void done(ParseObject fetchedMessage, ParseException e) {
-                            tvLastMessage.setText(((Message) fetchedMessage).getMessage());
-                        }
-                    });
+                    if (((Chat) fetchedChat).getChatLog() != null)
+                        ((Chat) fetchedChat).getChatLog().get(0).fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject fetchedMessage, ParseException e) {
+                                tvLastMessage.setText(((Message) fetchedMessage).getMessage());
+                            }
+                        });
                     tvTime.setText(setTime(fetchedChat.getUpdatedAt().toString()));
                 }
             });

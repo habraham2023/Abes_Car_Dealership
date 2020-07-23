@@ -100,10 +100,10 @@ public class ChatFragment extends Fragment {
                 adapter = new MessageAdapter(getContext(), messages);
                 final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                 linearLayoutManager.setReverseLayout(true);
-                linearLayoutManager.setStackFromEnd(true);
 
                 rvMessages.setLayoutManager(linearLayoutManager);
                 rvMessages.setAdapter(adapter);
+                rvMessages.smoothScrollToPosition(0);
             }
         });
 
@@ -111,6 +111,7 @@ public class ChatFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String data = etMessage.getText().toString();
+                if (data == null || data.isEmpty()) return;
                 final Message message = new Message();
                 message.setUser(ParseUser.getCurrentUser());
                 message.setMessage(data);
@@ -138,7 +139,7 @@ public class ChatFragment extends Fragment {
                     @Override
                     public void run() {
                         adapter.notifyDataSetChanged();
-                        rvMessages.scrollToPosition(0);
+                        rvMessages.smoothScrollToPosition(0);
                     }
                 });
             }
