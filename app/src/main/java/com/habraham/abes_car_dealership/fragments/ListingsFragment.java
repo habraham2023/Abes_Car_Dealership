@@ -2,6 +2,7 @@ package com.habraham.abes_car_dealership.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +27,8 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.ListingsAdapter;
 import com.habraham.abes_car_dealership.models.Favorite;
@@ -41,6 +46,7 @@ public class ListingsFragment extends Fragment {
 
     Toolbar toolbar;
     RecyclerView rvListings;
+    FloatingActionButton fabFilter;
     protected ListingsAdapter adapter;
     public Location location = new Location("location");
 
@@ -61,6 +67,7 @@ public class ListingsFragment extends Fragment {
 
         toolbar = view.findViewById(R.id.toolbar);
         rvListings = view.findViewById(R.id.rvListings);
+        fabFilter = view.findViewById(R.id.fabFilter);
 
         adapter = new ListingsAdapter(getContext(), new ArrayList<Listing>(), location);
         rvListings.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -70,6 +77,15 @@ public class ListingsFragment extends Fragment {
         getListings();
 
         getLocation();
+
+        fabFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FilterFragmentDialog filterFragmentDialog = FilterFragmentDialog.newInstance();
+                filterFragmentDialog.show(fm, "");
+            }
+        });
     }
 
     // Ask user for location permission if not yet given

@@ -25,8 +25,6 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="44dp"
-            android:layout_toStartOf="@+id/info"
             android:layout_toEndOf="@id/ivFirstImage"
             tools:text="Listing's Title" />
 
@@ -36,25 +34,25 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvTitle"
             android:layout_marginTop="12dp"
-            android:layout_marginEnd="4dp"
-            android:layout_toStartOf="@+id/info"
             android:layout_toEndOf="@id/ivFirstImage"
+            android:maxLines="3"
+            android:ellipsize="end"
             tools:text="@tools:sample/lorem[12]" />
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/info"
-            android:layout_width="wrap_content"
+            android:layout_width="190dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="4dp"
-            android:orientation="vertical">
+            android:layout_below="@+id/tvDescription"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:layout_toEndOf="@+id/ivFirstImage">
 
             <TextView
                 android:id="@+id/tvPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="12dp"
+                android:layout_marginStart="12dp"
                 android:text="@string/price"
                 android:textStyle="bold"
                 tools:text="@string/price" />
@@ -63,19 +61,18 @@
                 android:id="@+id/tvDistance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="12dp"
-                android:text="Dist."
+                android:layout_marginStart="12dp"
                 android:textStyle="bold"
-                tools:text="Dist." />
+                android:layout_toEndOf="@+id/tvPrice"
+                tools:text="2000.00mi" />
 
             <ImageView
                 android:id="@+id/ivFavorite"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_gravity="end"
-                android:layout_marginTop="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_alignParentEnd="true"
                 android:src="@drawable/favorite" />
-        </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>
