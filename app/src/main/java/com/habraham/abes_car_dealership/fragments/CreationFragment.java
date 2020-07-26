@@ -214,6 +214,11 @@ public class CreationFragment extends Fragment {
                     makeLayout.setError("Make of listing cannot be empty.");
                     error = true;
                 }
+                String model = modelDropdown.getText().toString();
+                if (model.isEmpty()) {
+                    modelLayout.setError("Model of listing cannot be empty.");
+                    error = true;
+                }
                 String year = yearDropdown.getText().toString();
                 if (year.isEmpty()) {
                     yearLayout.setError("Year of listing cannot be empty.");
@@ -239,7 +244,7 @@ public class CreationFragment extends Fragment {
                 }
 
                 if (!error)
-                    createListing(title, description, make, year, price, contact, extraInformation, address);
+                    createListing(title, description, make, model, year, price, contact, extraInformation, address);
             }
         });
 
@@ -292,7 +297,7 @@ public class CreationFragment extends Fragment {
         });
     }
 
-    public void createListing(String title, String description, String make, String year, String price, String contact, String extraInformation, String address) {
+    public void createListing(String title, String description, String make, String model, String year, String price, String contact, String extraInformation, String address) {
         titleInputLayout.setError(null);
         descriptionInputLayout.setError(null);
 
@@ -301,6 +306,7 @@ public class CreationFragment extends Fragment {
         listing.setDescription(description);
         listing.setSeller(ParseUser.getCurrentUser());
         listing.setMake(make);
+        listing.setModel(model);
         listing.setYear(year);
         listing.setImages(photos);
         listing.setPrice(price);

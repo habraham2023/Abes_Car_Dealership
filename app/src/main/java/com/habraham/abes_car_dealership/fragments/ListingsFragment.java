@@ -2,7 +2,7 @@ package com.habraham.abes_car_dealership.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +18,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,7 +25,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.ListingsAdapter;
@@ -40,15 +37,14 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListingsFragment extends Fragment {
+public class ListingsFragment extends Fragment implements FilterFragmentDialog.FilterDialogListener {
     private static final String TAG = "ListingsFragment";
     private static final int _REQUEST_CODE_LOCATION_PERMISSION = 1;
-
+    public Location location = new Location("location");
+    protected ListingsAdapter adapter;
     Toolbar toolbar;
     RecyclerView rvListings;
     FloatingActionButton fabFilter;
-    protected ListingsAdapter adapter;
-    public Location location = new Location("location");
 
     public ListingsFragment() {
         // Required empty public constructor
@@ -81,9 +77,9 @@ public class ListingsFragment extends Fragment {
         fabFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
                 FilterFragmentDialog filterFragmentDialog = FilterFragmentDialog.newInstance();
-                filterFragmentDialog.show(fm, "");
+                filterFragmentDialog.setTargetFragment(ListingsFragment.this, 300);
+                filterFragmentDialog.show(getActivity().getSupportFragmentManager(), "");
             }
         });
     }
@@ -119,13 +115,13 @@ public class ListingsFragment extends Fragment {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         LocationServices.getFusedLocationProviderClient(getActivity())
-                .requestLocationUpdates(locationRequest, new LocationCallback(){
+                .requestLocationUpdates(locationRequest, new LocationCallback() {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
                         super.onLocationResult(locationResult);
                         LocationServices.getFusedLocationProviderClient(getActivity()).removeLocationUpdates(this);
                         if (locationResult != null && locationResult.getLocations().size() > 0) {
-                            int latestLocationIndex = locationResult.getLocations().size()-1;
+                            int latestLocationIndex = locationResult.getLocations().size() - 1;
                             double latitude = locationResult.getLocations().get(latestLocationIndex).getLatitude();
                             double longitude = locationResult.getLocations().get(latestLocationIndex).getLongitude();
                             location.setLatitude(latitude);
@@ -155,6 +151,31 @@ public class ListingsFragment extends Fragment {
                         adapter.addAll(newListings);
                     }
                 });
+            }
+        });
+    }
+
+    @Override
+    public void onFinishFilterDialog(Intent i) {
+        String make = i.getStringExtra("make");
+        String model = i.getStringExtra("model");
+        String year = i.getStringExtra("year");
+
+        Log.i(TAG, "onFinishFilterDialog: " + make + " " + model + " " + year);
+
+        ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
+        query.orderByDescending("createdAt");
+        if (make != null && !make.isEmpty())
+            query.whereEqualTo(Listing.KEY_MAKE, make);
+        if (model != null && !model.isEmpty())
+            query.whereEqualTo(Listing.KEY_MODEL, model);
+        if (year != null && !year.isEmpty())
+            query.whereEqualTo(Listing.KEY_YEAR, year);
+        query.findInBackground(new FindCallback<Listing>() {
+            @Override
+            public void done(List<Listing> newListings, ParseException e) {
+                adapter.clear();
+                adapter.addAll(newListings);
             }
         });
     }

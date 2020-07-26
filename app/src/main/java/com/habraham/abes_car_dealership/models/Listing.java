@@ -18,6 +18,7 @@ public class Listing extends ParseObject {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_SELLER = "seller";
     public static final String KEY_MAKE = "make";
+    public static final String KEY_MODEL = "model";
     public static final String KEY_YEAR = "year";
     public static final String KEY_IMAGES = "images";
     public static final String KEY_PRICE = "price";
@@ -64,6 +65,14 @@ public class Listing extends ParseObject {
 
     public void setMake(String make) {
         put(KEY_MAKE, make);
+    }
+
+    public String getModel() {
+        return getString(KEY_MODEL);
+    }
+
+    public void setModel(String model) {
+        put(KEY_MODEL, model);
     }
 
     public String getYear() {
