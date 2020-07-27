@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.models.Make;
@@ -43,6 +44,7 @@ public class FilterFragmentDialog extends DialogFragment {
     AutoCompleteTextView modelDropdown;
     TextInputLayout yearLayout;
     AutoCompleteTextView yearDropdown;
+    TextInputEditText distanceEditText;
 
     List<Make> makes;
 
@@ -90,6 +92,7 @@ public class FilterFragmentDialog extends DialogFragment {
         modelDropdown = view.findViewById(R.id.modelDropdown);
         yearLayout = view.findViewById(R.id.yearLayout);
         yearDropdown = view.findViewById(R.id.yearDropdown);
+        distanceEditText = view.findViewById(R.id.distanceEditText);
         btnCancel = view.findViewById(R.id.btnCancel);
         btnApply = view.findViewById(R.id.btnApply);
 
@@ -120,12 +123,14 @@ public class FilterFragmentDialog extends DialogFragment {
                 String make = makeDropdown.getText().toString();
                 String model = modelDropdown.getText().toString();
                 String year = yearDropdown.getText().toString();
-
+                String distanceText = distanceEditText.getText().toString();
+                int maxDistance = distanceText.isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(distanceText);
                 FilterDialogListener listener = (FilterDialogListener) getTargetFragment();
                 Intent i = new Intent();
                 i.putExtra("make", make);
                 i.putExtra("model", model);
                 i.putExtra("year", year);
+                i.putExtra("maxDistance", maxDistance);
 
                 listener.onFinishFilterDialog(i);
                 dismiss();

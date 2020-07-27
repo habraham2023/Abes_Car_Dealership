@@ -32,6 +32,7 @@ import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ import java.util.List;
 public class ListingsFragment extends Fragment implements FilterFragmentDialog.FilterDialogListener {
     private static final String TAG = "ListingsFragment";
     private static final int _REQUEST_CODE_LOCATION_PERMISSION = 1;
+    private static final double METERS_TO_MILES = 0.00062137f;
+
     public Location location = new Location("location");
     protected ListingsAdapter adapter;
     Toolbar toolbar;
@@ -160,6 +163,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         String make = i.getStringExtra("make");
         String model = i.getStringExtra("model");
         String year = i.getStringExtra("year");
+        final int maxDistance = i.getIntExtra("maxDistance", Integer.MAX_VALUE);
 
         Log.i(TAG, "onFinishFilterDialog: " + make + " " + model + " " + year);
 
@@ -174,6 +178,17 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         query.findInBackground(new FindCallback<Listing>() {
             @Override
             public void done(List<Listing> newListings, ParseException e) {
+                for (int i = 0; i < newListings.size(); i++) {
+                    ParseGeoPoint sellerLocation = newListings.get(i).getLatLng();
+                    if (sellerLocation != null) {
+                        double distance;
+                        Location destination = new Location("destination");
+                        destination.setLatitude(sellerLocation.getLatitude());
+                        destination.setLongitude(sellerLocation.getLongitude());
+                        distance = location.distanceTo(destination) * METERS_TO_MILES;
+                        if (distance > maxDistance) newListings.remove(newListings.get(i--));
+                    }
+                }
                 adapter.clear();
                 adapter.addAll(newListings);
             }
