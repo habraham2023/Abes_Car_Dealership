@@ -3,9 +3,11 @@ package com.habraham.abes_car_dealership.fragments;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -33,8 +35,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
-import com.habraham.abes_car_dealership.adapters.SliderAdapter;
 import com.habraham.abes_car_dealership.SliderItem;
+import com.habraham.abes_car_dealership.adapters.SliderAdapter;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.habraham.abes_car_dealership.models.Make;
 import com.habraham.abes_car_dealership.models.Model;
@@ -51,7 +53,9 @@ import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +72,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class CreationFragment extends Fragment {
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
+    public final static int PICK_PHOTO_CODE = 1046;
     private static final String TAG = "CreationFragment";
     public String photoFileName = "image";
     protected File photoFile;
@@ -85,6 +90,7 @@ public class CreationFragment extends Fragment {
     AutoCompleteTextView modelDropdown;
     TextInputLayout yearLayout;
     AutoCompleteTextView yearDropdown;
+    MaterialButton btnTakePhoto;
     MaterialButton btnAddPhoto;
 
     TextInputLayout priceLayout;
@@ -133,6 +139,7 @@ public class CreationFragment extends Fragment {
         yearLayout = view.findViewById(R.id.yearLayout);
         yearDropdown = view.findViewById(R.id.yearDropdown);
         btnAddPhoto = view.findViewById(R.id.btnAddPhoto);
+        btnTakePhoto = view.findViewById(R.id.btnTakePhoto);
         priceLayout = view.findViewById(R.id.priceLayout);
         priceEditText = view.findViewById(R.id.priceEditText);
         contactLayout = view.findViewById(R.id.contactLayout);
@@ -160,6 +167,14 @@ public class CreationFragment extends Fragment {
         setMakes();
 
         btnAddPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "onClick: " + photos.size());
+                onPickPhoto();
+            }
+        });
+
+        btnTakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "onClick: " + photos.size());
@@ -398,20 +413,39 @@ public class CreationFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // by this point we have the camera photo on disk
-                Bitmap takenImage = rotateBitmapOrientation(photoFile.getAbsolutePath());
-                // RESIZE BITMAP, see section below
-                // Load the taken image into a preview
-                sliderItems.add(new SliderItem(takenImage));
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            // by this point we have the camera photo on disk
+            Bitmap takenImage = rotateBitmapOrientation(photoFile.getAbsolutePath());
+            // RESIZE BITMAP, see section below
+            // Load the taken image into a preview
+            sliderItems.add(new SliderItem(takenImage));
+            sliderAdapter.notifyItemInserted(sliderItems.size());
+            dotsIndicator.setViewPager2(viewPager2);
+            viewPager2.setCurrentItem(sliderItems.size() - 1, true);
+            photos.add(new ParseFile(photoFile));
+        } else if (requestCode == PICK_PHOTO_CODE && resultCode == RESULT_OK) {
+            Uri photoUri = data.getData();
+            Bitmap selectedImage = loadFromUri(photoUri);
+
+
+            try {
+                File f = new File(getContext().getCacheDir(), photoFileName + photos.size());
+                f.createNewFile();
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                selectedImage.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(bos.toByteArray());
+                fos.flush();
+                fos.close();
+                photos.add(new ParseFile(f));
+
+                sliderItems.add(new SliderItem(rotateBitmapOrientation(f.getAbsolutePath())));
                 sliderAdapter.notifyItemInserted(sliderItems.size());
                 dotsIndicator.setViewPager2(viewPager2);
                 viewPager2.setCurrentItem(sliderItems.size() - 1, true);
-                photos.add(new ParseFile(photoFile));
-
-            } else { // Result was a failure
-                Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -443,5 +477,34 @@ public class CreationFragment extends Fragment {
         Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
         // Return result
         return rotatedBitmap;
+    }
+
+    // Trigger gallery selection for a photo
+    public void onPickPhoto() {
+        // Create intent for picking a photo from the gallery
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+        // So as long as the result is not null, it's safe to use the intent.
+        startActivityForResult(intent, PICK_PHOTO_CODE);
+    }
+
+    public Bitmap loadFromUri(Uri photoUri) {
+        Bitmap image = null;
+        try {
+            // check version of Android on device
+            if (Build.VERSION.SDK_INT > 27) {
+                // on newer versions of Android, use the new decodeBitmap method
+                ImageDecoder.Source source = ImageDecoder.createSource(getActivity().getContentResolver(), photoUri);
+                image = ImageDecoder.decodeBitmap(source);
+            } else {
+                // support older versions of Android by using getBitmap
+                image = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), photoUri);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
     }
 }

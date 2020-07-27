@@ -155,7 +155,11 @@ public class FilterFragmentDialog extends DialogFragment {
                 for (Make make : makes) {
                     makeNames.add(make.getName());
                 }
+                try {
                 makeDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, makeNames));
+                } catch (Exception err) {
+                    err.printStackTrace();
+                }
             }
         });
     }
