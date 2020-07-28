@@ -74,6 +74,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         this.listings.clear();
         this.listings.addAll(listings);
         notifyDataSetChanged();
+        Log.i(TAG, "set: " + this.listings);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

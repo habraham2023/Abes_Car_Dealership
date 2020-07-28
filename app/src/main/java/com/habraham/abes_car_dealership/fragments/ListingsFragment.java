@@ -27,6 +27,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.habraham.abes_car_dealership.EndlessRecyclerViewScrollListener;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.ListingsAdapter;
 import com.habraham.abes_car_dealership.models.Favorite;
@@ -51,7 +52,9 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
     Toolbar toolbar;
     RecyclerView rvListings;
     FloatingActionButton fabFilter;
-    SwipeRefreshLayout swipeContainer;
+    protected SwipeRefreshLayout swipeContainer;
+    private EndlessRecyclerViewScrollListener scrollListener;
+
     public ListingsFragment() {
         // Required empty public constructor
     }
@@ -73,18 +76,28 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         swipeContainer = view.findViewById(R.id.swipeContainer);
 
         adapter = new ListingsAdapter(getContext(), new ArrayList<Listing>(), location);
-        rvListings.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        rvListings.setLayoutManager(llm);
         rvListings.setAdapter(adapter);
 
+        scrollListener = new EndlessRecyclerViewScrollListener(llm) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Log.i(TAG, "onLoadMore: " + page);
+                getListings(page);
+            }
+        };
+        rvListings.addOnScrollListener(scrollListener);
         adapter.clear();
-        getListings();
+        getListings(0);
 
         getLocation();
 
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getListings();
+                getListings(0);
+                scrollListener.resetState();
             }
         });
 
@@ -147,27 +160,30 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
     }
 
     // Get all initial listings to be displayed
-    protected void getListings() {
+    protected void getListings(final int page) {
         Listing.getAllListingsFavorited(new FindCallback<Favorite>() {
             @Override
             public void done(List<Favorite> favorites, ParseException e) {
-                Listing.listingsFavorited.clear();
+                if (page == 0) Listing.listingsFavorited.clear();
                 for (Favorite favorite : favorites) {
                     Listing.listingsFavorited.add(favorite.getListing().getObjectId());
                 }
                 Log.i(TAG, "done: " + Listing.listingsFavorited);
                 ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
                 query.orderByDescending("createdAt");
+                query.setLimit(Listing.QUERY_SIZE);
+                query.setSkip(Listing.QUERY_SIZE * page);
                 query.findInBackground(new FindCallback<Listing>() {
                     @Override
                     public void done(List<Listing> newListings, ParseException e) {
-                        adapter.clear();
+                        if (page == 0) adapter.clear();
                         adapter.addAll(newListings);
                         swipeContainer.setRefreshing(false);
+                        Log.i(TAG, "done: " + newListings.size());
                     }
                 });
             }
-        });
+        }, page);
     }
 
     @Override

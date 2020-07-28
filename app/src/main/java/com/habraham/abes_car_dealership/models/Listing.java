@@ -28,12 +28,14 @@ public class Listing extends ParseObject {
     public static final String KEY_LAT_LNG = "latLng";
 
     public static final List<String> listingsFavorited = new ArrayList<>();
+    public static final int QUERY_SIZE = 20;
 
     private double distance = 0;
 
-    public static void getAllListingsFavorited(final FindCallback<Favorite> callback) {
+    public static void getAllListingsFavorited(final FindCallback<Favorite> callback, int page) {
         ParseQuery<Favorite> findFavorited = ParseQuery.getQuery(Favorite.class);
         findFavorited.whereEqualTo("user", ParseUser.getCurrentUser());
+        findFavorited.setSkip(QUERY_SIZE * page);
         findFavorited.findInBackground(callback);
     }
 

@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.habraham.abes_car_dealership.EndlessRecyclerViewScrollListener;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.ListingsAdapter;
 import com.habraham.abes_car_dealership.models.Listing;
@@ -35,6 +37,7 @@ public class MyListingsFragment extends Fragment {
     List<Listing> myListings;
     Toolbar toolbar;
     FloatingActionButton fabAddListing;
+    EndlessRecyclerViewScrollListener scrollListener;
 
     public MyListingsFragment() {
         // Required empty public constructor
@@ -57,10 +60,18 @@ public class MyListingsFragment extends Fragment {
 
         myListings = new ArrayList<>();
         adapter = new ListingsAdapter(getContext(), myListings, null);
-        rvMyListings.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        rvMyListings.setLayoutManager(llm);
         rvMyListings.setAdapter(adapter);
-
-        getMyListings();
+        scrollListener = new EndlessRecyclerViewScrollListener(llm) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Log.i(TAG, "onLoadMore: " + page);
+                getMyListings(page);
+            }
+        };
+        rvMyListings.addOnScrollListener(scrollListener);
+        getMyListings(0);
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -85,17 +96,18 @@ public class MyListingsFragment extends Fragment {
     }
 
     // Get all listings that the user has created
-    private void getMyListings() {
+    private void getMyListings(final int page) {
         ParseQuery<Listing> myListingsQuery = ParseQuery.getQuery(Listing.class);
         myListingsQuery.whereEqualTo(Listing.KEY_SELLER, ParseUser.getCurrentUser());
         myListingsQuery.orderByDescending("createdAt");
+        myListingsQuery.setLimit(Listing.QUERY_SIZE);
+        myListingsQuery.setSkip(Listing.QUERY_SIZE * page);
         myListingsQuery.findInBackground(new FindCallback<Listing>() {
             @Override
             public void done(List<Listing> listings, ParseException e) {
-                myListings.clear();
-                myListings.addAll(listings);
-                Log.i(TAG, "done: " + myListings);
-                adapter.set(listings);
+                if(page == 0) adapter.clear();
+                Log.i(TAG, "done: " + listings.size());
+                adapter.addAll(listings);
             }
         });
     }

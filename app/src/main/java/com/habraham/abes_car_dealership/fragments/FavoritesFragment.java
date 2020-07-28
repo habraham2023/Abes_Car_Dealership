@@ -2,6 +2,8 @@ package com.habraham.abes_car_dealership.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -22,7 +24,13 @@ public class FavoritesFragment extends ListingsFragment {
     private static final String TAG = "FavoritesFragment";
 
     @Override
-    protected void getListings() {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        swipeContainer.setEnabled(false);
+    }
+
+    @Override
+    protected void getListings(int page) {
         Log.i(TAG, "getListings: " + Listing.listingsFavorited);
         ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
         query.orderByDescending("createdAt");
