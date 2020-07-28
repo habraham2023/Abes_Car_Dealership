@@ -157,15 +157,14 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
             });
 
             if (location != null) {
-                double distance = 0;
+                double distance;
                 ParseGeoPoint sellerLocation = listing.getLatLng();
                 if (sellerLocation != null) {
                     Location destination = new Location("destination");
                     destination.setLatitude(sellerLocation.getLatitude());
                     destination.setLongitude(sellerLocation.getLongitude());
                     distance = location.distanceTo(destination) * METERS_TO_MILES;
-                    Log.i(TAG, "onClick: " + distance);
-
+                    Log.i(TAG, "onClick: " + listing.getDistance());
                     String result = String.format(" %.2fmi", distance);
                     tvDistance.setText(result);
                 }

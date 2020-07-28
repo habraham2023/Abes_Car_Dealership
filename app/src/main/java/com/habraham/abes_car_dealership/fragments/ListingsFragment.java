@@ -36,6 +36,8 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ListingsFragment extends Fragment implements FilterFragmentDialog.FilterDialogListener {
@@ -164,7 +166,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         String model = i.getStringExtra("model");
         String year = i.getStringExtra("year");
         final int maxDistance = i.getIntExtra("maxDistance", Integer.MAX_VALUE);
-        String sort = i.getStringExtra("sort");
+        final String sort = i.getStringExtra("sort");
         Log.i(TAG, "onFinishFilterDialog: " + make + " " + model + " " + year);
 
         ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
@@ -203,9 +205,26 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
                         destination.setLatitude(sellerLocation.getLatitude());
                         destination.setLongitude(sellerLocation.getLongitude());
                         distance = location.distanceTo(destination) * METERS_TO_MILES;
+                        newListings.get(i).setDistance(distance);
                         if (distance > maxDistance) newListings.remove(newListings.get(i--));
                     }
                 }
+
+                if (sort != null && sort.equals("Distance: low to high"))
+                    Collections.sort(newListings, new Comparator<Listing>() {
+                        @Override
+                        public int compare(Listing listing1, Listing listing2) {
+                            return (int) (listing1.getDistance() - listing2.getDistance());
+                        }
+                    });
+                else if (sort != null && sort.equals("Distance: high to low"))
+                    Collections.sort(newListings, new Comparator<Listing>() {
+                        @Override
+                        public int compare(Listing listing1, Listing listing2) {
+                            return (int) (listing2.getDistance() - listing1.getDistance());
+                        }
+                    });
+
                 adapter.clear();
                 adapter.addAll(newListings);
             }

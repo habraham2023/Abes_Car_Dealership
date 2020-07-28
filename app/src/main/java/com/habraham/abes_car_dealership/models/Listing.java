@@ -29,6 +29,8 @@ public class Listing extends ParseObject {
 
     public static final List<String> listingsFavorited = new ArrayList<>();
 
+    private double distance = 0;
+
     public static void getAllListingsFavorited(final FindCallback<Favorite> callback) {
         ParseQuery<Favorite> findFavorited = ParseQuery.getQuery(Favorite.class);
         findFavorited.whereEqualTo("user", ParseUser.getCurrentUser());
@@ -129,5 +131,13 @@ public class Listing extends ParseObject {
 
     public void setLatLng(ParseGeoPoint latLng) {
         put(KEY_LAT_LNG, latLng);
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 }
