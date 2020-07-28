@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -50,7 +51,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
     Toolbar toolbar;
     RecyclerView rvListings;
     FloatingActionButton fabFilter;
-
+    SwipeRefreshLayout swipeContainer;
     public ListingsFragment() {
         // Required empty public constructor
     }
@@ -69,6 +70,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         toolbar = view.findViewById(R.id.toolbar);
         rvListings = view.findViewById(R.id.rvListings);
         fabFilter = view.findViewById(R.id.fabFilter);
+        swipeContainer = view.findViewById(R.id.swipeContainer);
 
         adapter = new ListingsAdapter(getContext(), new ArrayList<Listing>(), location);
         rvListings.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -78,6 +80,13 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         getListings();
 
         getLocation();
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getListings();
+            }
+        });
 
         fabFilter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,6 +163,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
                     public void done(List<Listing> newListings, ParseException e) {
                         adapter.clear();
                         adapter.addAll(newListings);
+                        swipeContainer.setRefreshing(false);
                     }
                 });
             }
