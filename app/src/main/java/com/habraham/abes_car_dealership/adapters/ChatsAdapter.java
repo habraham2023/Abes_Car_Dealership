@@ -89,7 +89,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
                         @Override
                         public void done(ParseObject fetchListing, ParseException e) {
                             tvListingTitle.setText(((Listing) fetchListing).getTitle());
-                            ((Listing) fetchListing).getSeller().fetchInBackground(new GetCallback<ParseObject>() {
+                            ((Listing) fetchListing).getSeller().fetchIfNeededInBackground(new GetCallback<ParseObject>() {
                                 @Override
                                 public void done(ParseObject fetchedUser, ParseException e) {
                                     tvSellerName.setText(((ParseUser) fetchedUser).getUsername());

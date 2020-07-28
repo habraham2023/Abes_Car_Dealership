@@ -39,8 +39,8 @@ import java.io.IOException;
 import static android.app.Activity.RESULT_OK;
 
 public class EditProfileFragment extends Fragment {
-    private static final String TAG = "EditProfileFragment";
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
+    private static final String TAG = "EditProfileFragment";
     public String photoFileName = "profilePicture.jpg";
     protected File photoFile;
     ImageView ivProfileImage;
@@ -124,6 +124,7 @@ public class EditProfileFragment extends Fragment {
                 ParseUser user = ParseUser.getCurrentUser();
                 user.put("screenName", newScreenName);
                 user.put("bio", newBio);
+                if (photoFile != null)
                     user.put("profilePicture", new ParseFile(photoFile));
 
                 user.saveInBackground(new SaveCallback() {

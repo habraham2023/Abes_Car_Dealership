@@ -43,8 +43,7 @@
             android:id="@+id/info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvDescription"
-            android:layout_marginTop="8dp"
+            android:layout_alignBottom="@+id/ivFirstImage"
             android:layout_marginBottom="4dp"
             android:layout_toEndOf="@+id/ivFirstImage">
 
