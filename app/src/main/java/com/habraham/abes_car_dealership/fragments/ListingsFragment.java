@@ -164,17 +164,34 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         String model = i.getStringExtra("model");
         String year = i.getStringExtra("year");
         final int maxDistance = i.getIntExtra("maxDistance", Integer.MAX_VALUE);
-
+        String sort = i.getStringExtra("sort");
         Log.i(TAG, "onFinishFilterDialog: " + make + " " + model + " " + year);
 
         ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
-        query.orderByDescending("createdAt");
+        query.orderByDescending(Listing.KEY_UPDATED_AT);
+
         if (make != null && !make.isEmpty())
             query.whereEqualTo(Listing.KEY_MAKE, make);
         if (model != null && !model.isEmpty())
             query.whereEqualTo(Listing.KEY_MODEL, model);
         if (year != null && !year.isEmpty())
             query.whereEqualTo(Listing.KEY_YEAR, year);
+        if (sort != null && !sort.isEmpty()) {
+            switch (sort) {
+                case "Price: low to high":
+                    query.orderByAscending(Listing.KEY_PRICE);
+                    break;
+                case "Price: high to low":
+                    query.orderByDescending(Listing.KEY_PRICE);
+                    break;
+                case "Most Recent":
+                    query.orderByDescending(Listing.KEY_UPDATED_AT);
+                    break;
+                case "Least Recent":
+                    query.orderByAscending(Listing.KEY_UPDATED_AT);
+                    break;
+            }
+        }
         query.findInBackground(new FindCallback<Listing>() {
             @Override
             public void done(List<Listing> newListings, ParseException e) {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.FilterFragmentDialog">
 
     <LinearLayout
@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/makeLayout"
             style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
@@ -18,8 +19,8 @@
             android:layout_height="match_parent"
             android:layout_marginHorizontal="4dp"
             android:layout_marginTop="24dp"
-            android:hint="@string/make"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:hint="@string/make">
 
             <AutoCompleteTextView
                 android:id="@+id/makeDropdown"
@@ -35,8 +36,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="4dp"
             android:layout_marginTop="24dp"
-            android:hint="@string/model"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:hint="@string/model">
 
             <AutoCompleteTextView
                 android:id="@+id/modelDropdown"
@@ -52,8 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="4dp"
             android:layout_marginTop="24dp"
-            android:hint="@string/year"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:hint="@string/year">
 
             <AutoCompleteTextView
                 android:id="@+id/yearDropdown"
@@ -80,6 +81,25 @@
             android:layout_height="wrap_content"
             android:hint="@string/maxDistance"
             android:inputType="numberDecimal" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/sortLayout"
+        style="@style/Widget.Abe.TextInputLayout.DropdownMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/distanceLayout"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginTop="24dp"
+        android:hint="@string/sort">
+
+        <AutoCompleteTextView
+            android:id="@+id/sortDropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <RelativeLayout

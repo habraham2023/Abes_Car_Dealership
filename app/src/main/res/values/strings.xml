@@ -41,4 +41,5 @@
     <string name="apply">Apply</string>
     <string name="takePhoto">Take Photo</string>
     <string name="maxDistance">Max Distance (miles)</string>
+    <string name="sort">Sort</string>
 </resources>

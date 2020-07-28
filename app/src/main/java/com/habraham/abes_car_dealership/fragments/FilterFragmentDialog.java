@@ -45,13 +45,14 @@ public class FilterFragmentDialog extends DialogFragment {
     TextInputLayout yearLayout;
     AutoCompleteTextView yearDropdown;
     TextInputEditText distanceEditText;
-
+    AutoCompleteTextView sortDropdown;
     List<Make> makes;
 
     MaterialButton btnCancel;
     MaterialButton btnApply;
 
-    public FilterFragmentDialog() {}
+    public FilterFragmentDialog() {
+    }
 
     public interface FilterDialogListener {
         void onFinishFilterDialog(Intent i);
@@ -93,6 +94,7 @@ public class FilterFragmentDialog extends DialogFragment {
         yearLayout = view.findViewById(R.id.yearLayout);
         yearDropdown = view.findViewById(R.id.yearDropdown);
         distanceEditText = view.findViewById(R.id.distanceEditText);
+        sortDropdown = view.findViewById(R.id.sortDropdown);
         btnCancel = view.findViewById(R.id.btnCancel);
         btnApply = view.findViewById(R.id.btnApply);
 
@@ -109,6 +111,7 @@ public class FilterFragmentDialog extends DialogFragment {
         });
 
         yearDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.years));
+        sortDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, rawValues.sorts));
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,12 +128,15 @@ public class FilterFragmentDialog extends DialogFragment {
                 String year = yearDropdown.getText().toString();
                 String distanceText = distanceEditText.getText().toString();
                 int maxDistance = distanceText.isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(distanceText);
+                String sort = sortDropdown.getText().toString();
+
                 FilterDialogListener listener = (FilterDialogListener) getTargetFragment();
                 Intent i = new Intent();
                 i.putExtra("make", make);
                 i.putExtra("model", model);
                 i.putExtra("year", year);
                 i.putExtra("maxDistance", maxDistance);
+                i.putExtra("sort", sort);
 
                 listener.onFinishFilterDialog(i);
                 dismiss();
@@ -161,7 +167,7 @@ public class FilterFragmentDialog extends DialogFragment {
                     makeNames.add(make.getName());
                 }
                 try {
-                makeDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, makeNames));
+                    makeDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, makeNames));
                 } catch (Exception err) {
                     err.printStackTrace();
                 }
