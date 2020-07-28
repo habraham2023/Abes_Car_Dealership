@@ -1,17 +1,24 @@
 package com.habraham.abes_car_dealership.fragments;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +38,7 @@ import com.parse.DeleteCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -117,7 +125,10 @@ public class DetailsFragment extends Fragment {
         tvTitle.setText(listing.getTitle());
         tvDescription.setText(listing.getDescription());
         tvPrice.append(" $" + listing.getPrice());
-        tvLocation.append(" " + listing.getAddress());
+
+        Spannable spannable = new SpannableString(listing.getAddress());
+        spannable.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.secondaryLightColor)), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        tvLocation.append(spannable);
         tvContact.append(" " + listing.getContact());
         try {
             ParseUser user = listing.fetchIfNeeded().getParseUser(Listing.KEY_SELLER);
@@ -246,6 +257,18 @@ public class DetailsFragment extends Fragment {
                         }
                     });
                 }
+            }
+        });
+
+        tvLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ParseGeoPoint geoPoint = listing.getLatLng();
+                String URI = String.format("geo:%f,%f?q=%f,%f(Listing: %s)", geoPoint.getLatitude(), geoPoint.getLongitude(), geoPoint.getLatitude(), geoPoint.getLongitude(), listing.getTitle());
+                Uri gmmIntentUri = Uri.parse(URI);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
             }
         });
 
