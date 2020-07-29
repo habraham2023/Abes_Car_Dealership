@@ -52,8 +52,11 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
     Toolbar toolbar;
     RecyclerView rvListings;
     FloatingActionButton fabFilter;
-    protected SwipeRefreshLayout swipeContainer;
-    private EndlessRecyclerViewScrollListener scrollListener;
+    SwipeRefreshLayout swipeContainer;
+    EndlessRecyclerViewScrollListener scrollListener;
+
+    String make, model, year, sort;
+    int maxDistance;
 
     public ListingsFragment() {
         // Required empty public constructor
@@ -89,6 +92,10 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         };
         rvListings.addOnScrollListener(scrollListener);
         adapter.clear();
+
+        make = model = year = sort = "";
+        maxDistance = Integer.MAX_VALUE;
+
         getListings(0);
 
         getLocation();
@@ -170,9 +177,10 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
                 }
                 Log.i(TAG, "done: " + Listing.listingsFavorited);
                 ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
-                query.orderByDescending("createdAt");
+                query.orderByDescending(Listing.KEY_UPDATED_AT);
                 query.setLimit(Listing.QUERY_SIZE);
                 query.setSkip(Listing.QUERY_SIZE * page);
+                setFilteredQuery(query, make, model, year, maxDistance, sort);
                 query.findInBackground(new FindCallback<Listing>() {
                     @Override
                     public void done(List<Listing> newListings, ParseException e) {
@@ -188,38 +196,18 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
 
     @Override
     public void onFinishFilterDialog(Intent i) {
-        String make = i.getStringExtra("make");
-        String model = i.getStringExtra("model");
-        String year = i.getStringExtra("year");
-        final int maxDistance = i.getIntExtra("maxDistance", Integer.MAX_VALUE);
-        final String sort = i.getStringExtra("sort");
+        make = i.getStringExtra("make");
+        model = i.getStringExtra("model");
+        year = i.getStringExtra("year");
+        maxDistance = i.getIntExtra("maxDistance", Integer.MAX_VALUE);
+        sort = i.getStringExtra("sort");
         Log.i(TAG, "onFinishFilterDialog: " + make + " " + model + " " + year);
 
         ParseQuery<Listing> query = ParseQuery.getQuery(Listing.class);
         query.orderByDescending(Listing.KEY_UPDATED_AT);
+        query.setLimit(Listing.QUERY_SIZE);
+        setFilteredQuery(query, make, model, year, maxDistance, sort);
 
-        if (make != null && !make.isEmpty())
-            query.whereEqualTo(Listing.KEY_MAKE, make);
-        if (model != null && !model.isEmpty())
-            query.whereEqualTo(Listing.KEY_MODEL, model);
-        if (year != null && !year.isEmpty())
-            query.whereEqualTo(Listing.KEY_YEAR, year);
-        if (sort != null && !sort.isEmpty()) {
-            switch (sort) {
-                case "Price: low to high":
-                    query.orderByAscending(Listing.KEY_PRICE);
-                    break;
-                case "Price: high to low":
-                    query.orderByDescending(Listing.KEY_PRICE);
-                    break;
-                case "Most Recent":
-                    query.orderByDescending(Listing.KEY_UPDATED_AT);
-                    break;
-                case "Least Recent":
-                    query.orderByAscending(Listing.KEY_UPDATED_AT);
-                    break;
-            }
-        }
         query.findInBackground(new FindCallback<Listing>() {
             @Override
             public void done(List<Listing> newListings, ParseException e) {
@@ -232,7 +220,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
                         destination.setLongitude(sellerLocation.getLongitude());
                         distance = location.distanceTo(destination) * METERS_TO_MILES;
                         newListings.get(i).setDistance(distance);
-                        if (distance > maxDistance) newListings.remove(newListings.get(i--));
+                        if (distance > maxDistance) newListings.remove(i--);
                     }
                 }
 
@@ -255,5 +243,30 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
                 adapter.addAll(newListings);
             }
         });
+    }
+
+    public void setFilteredQuery(ParseQuery query, String make, String model, String year, int maxDistance, String sort) {
+        if (make != null && !make.isEmpty())
+            query.whereEqualTo(Listing.KEY_MAKE, make);
+        if (model != null && !model.isEmpty())
+            query.whereEqualTo(Listing.KEY_MODEL, model);
+        if (year != null && !year.isEmpty())
+            query.whereEqualTo(Listing.KEY_YEAR, year);
+        if (sort != null && !sort.isEmpty()) {
+            switch (sort) {
+                case "Price: low to high":
+                    query.orderByAscending(Listing.KEY_PRICE);
+                    break;
+                case "Price: high to low":
+                    query.orderByDescending(Listing.KEY_PRICE);
+                    break;
+                case "Most Recent":
+                    query.orderByDescending(Listing.KEY_UPDATED_AT);
+                    break;
+                case "Least Recent":
+                    query.orderByAscending(Listing.KEY_UPDATED_AT);
+                    break;
+            }
+        }
     }
 }
