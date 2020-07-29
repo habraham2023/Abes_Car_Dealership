@@ -95,8 +95,8 @@ public class Listing extends ParseObject {
         put(KEY_IMAGES, images);
     }
 
-    public int getPrice() {
-        return (int) getNumber(KEY_PRICE);
+    public double getPrice() {
+        return (double) getDouble(KEY_PRICE);
     }
 
     public void setPrice(String price) {

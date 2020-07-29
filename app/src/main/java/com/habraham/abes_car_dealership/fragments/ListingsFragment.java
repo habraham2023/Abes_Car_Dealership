@@ -78,7 +78,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         fabFilter = view.findViewById(R.id.fabFilter);
         swipeContainer = view.findViewById(R.id.swipeContainer);
 
-        adapter = new ListingsAdapter(getContext(), new ArrayList<Listing>(), location);
+        adapter = new ListingsAdapter(getContext(), new ArrayList<Listing>(), location, this);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rvListings.setLayoutManager(llm);
         rvListings.setAdapter(adapter);

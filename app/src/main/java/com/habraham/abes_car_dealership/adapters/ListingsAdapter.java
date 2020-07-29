@@ -1,6 +1,7 @@
 package com.habraham.abes_car_dealership.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
 import android.util.Log;
@@ -12,14 +13,19 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.fragments.DetailsFragment;
+import com.habraham.abes_car_dealership.fragments.MyListingsFragment;
+import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.parse.DeleteCallback;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -35,11 +41,13 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
     private Context context;
     private List<Listing> listings;
     private Location location;
+    private Fragment fragment;
 
-    public ListingsAdapter(Context context, List<Listing> listings, Location location) {
+    public ListingsAdapter(Context context, List<Listing> listings, Location location, Fragment fragment) {
         this.context = context;
         this.listings = listings;
         this.location = location;
+        this.fragment = fragment;
     }
 
     @NonNull
@@ -70,14 +78,29 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    public void set(List<Listing> listings) {
-        this.listings.clear();
-        this.listings.addAll(listings);
-        notifyDataSetChanged();
-        Log.i(TAG, "set: " + this.listings);
+    private void deleteListing(final int position) {
+        final Listing toBeDeleted = listings.get(position);
+        ParseQuery<Chat> relatedChatsQuery = ParseQuery.getQuery(Chat.class);
+        relatedChatsQuery.whereEqualTo(Chat.KEY_LISTING, toBeDeleted);
+        Log.i(TAG, "deleteListing: ");
+        relatedChatsQuery.findInBackground(new FindCallback<Chat>() {
+            @Override
+            public void done(List<Chat> chats, ParseException e) {
+                Log.i(TAG, "done: " + chats);
+                for (Chat chat : chats) chat.deleteInBackground();
+                toBeDeleted.deleteInBackground(new DeleteCallback() {
+                    @Override
+                    public void done(ParseException e) {
+
+                        listings.remove(position);
+                        notifyItemRemoved(position);
+                    }
+                });
+            }
+        });
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         private TextView tvTitle;
         private TextView tvDescription;
         private TextView tvPrice;
@@ -94,12 +117,13 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
             ivFirstImage = itemView.findViewById(R.id.ivFirstImage);
             ivFavorite = itemView.findViewById(R.id.ivFavorite);
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         public void bind(final Listing listing) {
             tvTitle.setText(listing.getTitle());
             tvDescription.setText(listing.getDescription());
-            tvPrice.setText("$"+listing.getPrice());
+            tvPrice.setText(String.format("$%.2f", listing.getPrice()));
             if (Listing.listingsFavorited.contains(listing.getObjectId())) {
                 Glide.with(context).load(R.drawable.favorite_fill).into(ivFavorite);
                 ivFavorite.setColorFilter(context.getColor(R.color.secondaryDarkColor));
@@ -175,7 +199,33 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         @Override
         public void onClick(View view) {
             DetailsFragment detailsFragment = DetailsFragment.newInstance(listings.get(getAdapterPosition()));
-            ((AppCompatActivity)context).getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, detailsFragment).addToBackStack(null).commit();
+            ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, detailsFragment).addToBackStack(null).commit();
+        }
+
+
+        @Override
+        public boolean onLongClick(View view) {
+            if (fragment instanceof MyListingsFragment) {
+                Log.i(TAG, "onLongClick: is MyListingsFragment");
+                new MaterialAlertDialogBuilder(context)
+                        .setTitle("Delete this listing?")
+                        .setMessage(listings.get(getAdapterPosition()).getTitle())
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Log.i(TAG, "onClick: Don't Delete");
+                            }
+                        })
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Log.i(TAG, "onClick: Do Delete");
+                                deleteListing(getAdapterPosition());
+                            }
+                        }).show();
+                return true;
+            }
+            return false;
         }
     }
 }
