@@ -16,13 +16,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.habraham.abes_car_dealership.EndlessRecyclerViewScrollListener;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.MessageAdapter;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Message;
 import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.livequery.ParseLiveQueryClient;
@@ -35,7 +35,7 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class ChatFragment extends Fragment {
     private static final String TAG = "ChatFragment";
-    private static final String ARG_CHAT = "chat";
+    private static final String ARG_CHAT_ID = "chatID";
     final List<Message> messages = new ArrayList<>();
     RecyclerView rvMessages;
     MessageAdapter adapter;
@@ -43,15 +43,16 @@ public class ChatFragment extends Fragment {
     ImageButton send;
     Toolbar toolbar;
     private Chat chat;
+    private String objectID;
 
     public ChatFragment() {
         // Required empty public constructor
     }
 
-    public static ChatFragment newInstance(Chat chat) {
+    public static ChatFragment newInstance(String objectId) {
         ChatFragment fragment = new ChatFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_CHAT, chat);
+        args.putString(ARG_CHAT_ID, objectId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,7 +60,7 @@ public class ChatFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            chat = getArguments().getParcelable(ARG_CHAT);
+            objectID = getArguments().getString(ARG_CHAT_ID);
         }
     }
 
@@ -89,23 +90,7 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        chat.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject fetchedChat, ParseException e) {
-                List<Message> initMessages = ((Chat) fetchedChat).getChatLog();
-                Log.i(TAG, "done: " + initMessages);
-
-                if (initMessages != null) messages.addAll(initMessages);
-
-                adapter = new MessageAdapter(getContext(), messages);
-                final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-                linearLayoutManager.setReverseLayout(true);
-
-                rvMessages.setLayoutManager(linearLayoutManager);
-                rvMessages.setAdapter(adapter);
-                rvMessages.smoothScrollToPosition(0);
-            }
-        });
+        setChat();
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,7 +100,7 @@ public class ChatFragment extends Fragment {
                 final Message message = new Message();
                 message.setUser(ParseUser.getCurrentUser());
                 message.setMessage(data);
-                message.setChatID(chat.getObjectId());
+                message.setChatID(objectID);
                 message.saveInBackground();
                 etMessage.setText(null);
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
@@ -127,7 +112,7 @@ public class ChatFragment extends Fragment {
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
 
         ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
-        parseQuery.whereEqualTo(Message.KEY_CHAT_ID, chat.getObjectId());
+        parseQuery.whereEqualTo(Message.KEY_CHAT_ID, objectID);
         SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
 
         subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Message>() {
@@ -143,6 +128,38 @@ public class ChatFragment extends Fragment {
                         rvMessages.smoothScrollToPosition(0);
                     }
                 });
+            }
+        });
+    }
+
+    public void setChat() {
+        ParseQuery<Chat> chatQuery = ParseQuery.getQuery(Chat.class);
+        Log.i(TAG, "setChat: " + objectID);
+        chatQuery.whereEqualTo(Chat.KEY_OBJECT_ID, objectID);
+        chatQuery.include(Chat.KEY_CHAT_LOG);
+        chatQuery.include(Chat.KEY_INITIATOR);
+        chatQuery.include(Chat.KEY_CONTACTED);
+        chatQuery.include(Chat.KEY_LISTING);
+        chatQuery.getFirstInBackground(new GetCallback<Chat>() {
+            @Override
+            public void done(Chat chat, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "ERROR: ", e);
+                    return;
+                }
+
+                ChatFragment.this.chat = chat;
+                List<Message> initMessages = chat.getChatLog();
+                Log.i(TAG, "done: " + initMessages);
+
+                if (initMessages != null) messages.addAll(initMessages);
+                adapter = new MessageAdapter(getContext(), messages);
+                final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+                linearLayoutManager.setReverseLayout(true);
+
+                rvMessages.setLayoutManager(linearLayoutManager);
+                rvMessages.setAdapter(adapter);
+                rvMessages.smoothScrollToPosition(0);
             }
         });
     }

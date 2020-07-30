@@ -4,6 +4,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,22 +24,11 @@ import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habraham.abes_car_dealership.R;
-import com.habraham.abes_car_dealership.adapters.SliderAdapter;
 import com.habraham.abes_car_dealership.SliderItem;
+import com.habraham.abes_car_dealership.adapters.SliderAdapter;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
@@ -38,7 +36,6 @@ import com.parse.DeleteCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -47,14 +44,10 @@ import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.HttpUrl;
-
 public class DetailsFragment extends Fragment {
     private static final String TAG = "DetailsFragment";
 
     private static final String LISTING = "listing";
-    private Listing listing;
-
     Toolbar toolbar;
     TextView tvTitle;
     TextView tvDescription;
@@ -64,11 +57,11 @@ public class DetailsFragment extends Fragment {
     TextView tvContact;
     TextView tvExtraInformation;
     FloatingActionButton fabAddChat;
-
     ImageView ivFavorite;
     ViewPager2 viewPager2;
     DotsIndicator dotsIndicator;
     List<SliderItem> sliderItems;
+    private Listing listing;
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -135,7 +128,8 @@ public class DetailsFragment extends Fragment {
         try {
             ParseUser user = listing.fetchIfNeeded().getParseUser(Listing.KEY_SELLER);
             tvSellerName.append(" " + user.fetchIfNeeded().getString("screenName"));
-            if (user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) fabAddChat.setVisibility(View.GONE);
+            if (user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId()))
+                fabAddChat.setVisibility(View.GONE);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -208,12 +202,12 @@ public class DetailsFragment extends Fragment {
                         try {
                             if (chat.isEqual(user, listing.getSeller(), listing)) {
                                 Log.i(TAG, "onClick: Chat exists");
-                                ChatFragment chatFragment = ChatFragment.newInstance(chat);
+                                ChatFragment chatFragment = ChatFragment.newInstance(chat.getObjectId());
                                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, chatFragment).addToBackStack(null).commit();
                                 return;
                             }
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            Log.e(TAG, "Exception: ", e);
                             return;
                         }
                     }
@@ -231,7 +225,7 @@ public class DetailsFragment extends Fragment {
                             user.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
-                                    ChatFragment chatFragment = ChatFragment.newInstance(chat);
+                                    ChatFragment chatFragment = ChatFragment.newInstance(chat.getObjectId());
                                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, chatFragment).addToBackStack(null).commit();
                                 }
                             });
@@ -252,7 +246,7 @@ public class DetailsFragment extends Fragment {
                             user.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
-                                    ChatFragment chatFragment = ChatFragment.newInstance(chat);
+                                    ChatFragment chatFragment = ChatFragment.newInstance(chat.getObjectId());
                                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, chatFragment).addToBackStack(null).commit();
                                 }
                             });

@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.fragments.DetailsFragment;
+import com.habraham.abes_car_dealership.fragments.FavoritesFragment;
 import com.habraham.abes_car_dealership.fragments.MyListingsFragment;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
@@ -155,6 +156,10 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
                                             ivFavorite.setColorFilter(Color.BLACK);
                                             Listing.listingsFavorited.remove(listing.getObjectId());
                                             Log.i(TAG, "onClick: " + Listing.listingsFavorited);
+                                            if (fragment instanceof FavoritesFragment) {
+                                                listings.remove(getAdapterPosition());
+                                                notifyItemRemoved(getAdapterPosition());
+                                            }
                                         }
                                     }
                                 });

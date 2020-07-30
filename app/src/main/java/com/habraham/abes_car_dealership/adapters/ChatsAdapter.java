@@ -128,7 +128,8 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
 
         @Override
         public void onClick(View view) {
-            ChatFragment chatFragment = ChatFragment.newInstance(chats.get(getAdapterPosition()));
+            Log.i(TAG, "onClick: " + chats.get(getAdapterPosition()).getObjectId());
+            ChatFragment chatFragment = ChatFragment.newInstance(chats.get(getAdapterPosition()).getObjectId());
             ((MainActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, chatFragment).addToBackStack(null).commit();
         }
     }
