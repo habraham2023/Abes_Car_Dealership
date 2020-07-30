@@ -198,15 +198,18 @@ public class DetailsFragment extends Fragment {
                 if (chats != null) {
                     Log.i(TAG, "onClick: " + chats);
                     // Try and find an existing matching chat
-                    for (Chat chat : chats) {
+                    for (int i = 0; i < chats.size(); i++) {
                         try {
-                            if (chat.isEqual(user, listing.getSeller(), listing)) {
+                            if (chats.get(i).isEqual(user, listing.getSeller(), listing)) {
                                 Log.i(TAG, "onClick: Chat exists");
-                                ChatFragment chatFragment = ChatFragment.newInstance(chat.getObjectId());
+                                ChatFragment chatFragment = ChatFragment.newInstance(chats.get(i).getObjectId());
                                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, chatFragment).addToBackStack(null).commit();
                                 return;
                             }
                         } catch (ParseException e) {
+                            chats.remove(i);
+                            user.put("chats", chats);
+                            user.saveInBackground();
                             Log.e(TAG, "Exception: ", e);
                         }
                     }
