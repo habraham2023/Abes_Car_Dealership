@@ -208,7 +208,6 @@ public class DetailsFragment extends Fragment {
                             }
                         } catch (ParseException e) {
                             Log.e(TAG, "Exception: ", e);
-                            return;
                         }
                     }
 

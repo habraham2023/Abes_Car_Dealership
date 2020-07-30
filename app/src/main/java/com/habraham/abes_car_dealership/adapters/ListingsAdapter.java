@@ -89,12 +89,19 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
             public void done(List<Chat> chats, ParseException e) {
                 Log.i(TAG, "done: " + chats);
                 for (Chat chat : chats) chat.deleteInBackground();
-                toBeDeleted.deleteInBackground(new DeleteCallback() {
+                ParseQuery<Favorite> favoriteParseQuery = ParseQuery.getQuery(Favorite.class);
+                favoriteParseQuery.whereEqualTo(Favorite.KEY_LISTING, toBeDeleted);
+                favoriteParseQuery.findInBackground(new FindCallback<Favorite>() {
                     @Override
-                    public void done(ParseException e) {
-
-                        listings.remove(position);
-                        notifyItemRemoved(position);
+                    public void done(List<Favorite> favorites, ParseException e) {
+                        for (Favorite favorite : favorites) favorite.deleteInBackground();
+                        toBeDeleted.deleteInBackground(new DeleteCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                listings.remove(position);
+                                notifyItemRemoved(position);
+                            }
+                        });
                     }
                 });
             }

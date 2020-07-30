@@ -242,16 +242,19 @@ public class CreationFragment extends Fragment {
                 String price = priceEditText.getText().toString();
                 if (price.isEmpty()) {
                     priceLayout.setError("Price of listing cannot be empty.");
+                    error = true;
                 }
                 String contact = contactEditText.getText().toString();
                 if (contact.isEmpty()) {
                     contactLayout.setError("Contact Information cannot be empty.");
+                    error = true;
                 }
                 String extraInformation = extraInformationEditText.getText().toString();
 
                 String address = addressEditText.getText().toString();
                 if (address.isEmpty()) {
                     addressLayout.setError("Address cannot be empty");
+                    error = true;
                 }
                 if (photos.isEmpty()) {
                     Toast.makeText(getContext(), "Listing needs at least one photo.", Toast.LENGTH_SHORT);
@@ -260,6 +263,7 @@ public class CreationFragment extends Fragment {
 
                 if (!error)
                     createListing(title, description, make, model, year, price, contact, extraInformation, address);
+                else progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -315,6 +319,12 @@ public class CreationFragment extends Fragment {
     public void createListing(String title, String description, String make, String model, String year, String price, String contact, String extraInformation, String address) {
         titleInputLayout.setError(null);
         descriptionInputLayout.setError(null);
+        makeLayout.setError(null);
+        modelLayout.setError(null);
+        yearLayout.setError(null);
+        priceLayout.setError(null);
+        contactLayout.setError(null);
+        addressLayout.setError(null);
 
         final Listing listing = new Listing();
         listing.setTitle(title);
