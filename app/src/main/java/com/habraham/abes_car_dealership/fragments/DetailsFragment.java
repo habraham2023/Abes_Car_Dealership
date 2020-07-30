@@ -47,6 +47,8 @@ import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.HttpUrl;
+
 public class DetailsFragment extends Fragment {
     private static final String TAG = "DetailsFragment";
 
@@ -263,8 +265,7 @@ public class DetailsFragment extends Fragment {
         tvLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ParseGeoPoint geoPoint = listing.getLatLng();
-                String URI = String.format("geo:%f,%f?q=%f,%f(Listing: %s)", geoPoint.getLatitude(), geoPoint.getLongitude(), geoPoint.getLatitude(), geoPoint.getLongitude(), listing.getTitle());
+                String URI = String.format("geo:0,0?q=%s", listing.getAddress());
                 Uri gmmIntentUri = Uri.parse(URI);
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");

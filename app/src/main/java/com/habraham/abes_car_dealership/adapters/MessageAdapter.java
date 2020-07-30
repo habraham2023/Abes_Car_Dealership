@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.models.Message;
 import com.parse.GetCallback;
@@ -77,11 +78,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                             if (fetchedId.equals(userId)) {
                                 ivMe.setVisibility(View.VISIBLE);
                                 ivOther.setVisibility(View.GONE);
-                                Glide.with(context).load(((ParseUser) fetchedUser).getParseFile("profilePicture").getUrl()).into(ivMe);
+                                Glide.with(context).load(((ParseUser) fetchedUser).getParseFile("profilePicture").getUrl()).transform(new CircleCrop()).into(ivMe);
                             } else {
                                 ivOther.setVisibility(View.VISIBLE);
                                 ivMe.setVisibility(View.GONE);
-                                Glide.with(context).load(((ParseUser) fetchedUser).getParseFile("profilePicture").getUrl()).into(ivOther);
+                                Glide.with(context).load(((ParseUser) fetchedUser).getParseFile("profilePicture").getUrl()).transform(new CircleCrop()).into(ivOther);
                             }
                         }
                     });
