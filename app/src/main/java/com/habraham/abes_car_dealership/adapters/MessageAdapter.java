@@ -15,9 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.models.Message;
-import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.List;
@@ -44,7 +42,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.i(TAG, "onBindViewHolder: " + position);
         Message message = messages.get(position);
-        holder.bind(message);
+        try {
+            holder.bind(message);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -64,30 +66,25 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             tvMessage = itemView.findViewById(R.id.tvMessage);
         }
 
-        public void bind(Message message) {
-            message.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-                @Override
-                public void done(ParseObject fetchMessage, ParseException e) {
-                    String message = ((Message) fetchMessage).getMessage();
-                    tvMessage.setText(message);
-                    ((Message) fetchMessage).getUser().fetchInBackground(new GetCallback<ParseObject>() {
-                        @Override
-                        public void done(ParseObject fetchedUser, ParseException e) {
-                            String fetchedId = ((ParseUser) fetchedUser).getObjectId();
-                            String userId = ParseUser.getCurrentUser().getObjectId();
-                            if (fetchedId.equals(userId)) {
-                                ivMe.setVisibility(View.VISIBLE);
-                                ivOther.setVisibility(View.GONE);
-                                Glide.with(context).load(((ParseUser) fetchedUser).getParseFile("profilePicture").getUrl()).transform(new CircleCrop()).into(ivMe);
-                            } else {
-                                ivOther.setVisibility(View.VISIBLE);
-                                ivMe.setVisibility(View.GONE);
-                                Glide.with(context).load(((ParseUser) fetchedUser).getParseFile("profilePicture").getUrl()).transform(new CircleCrop()).into(ivOther);
-                            }
-                        }
-                    });
-                }
-            });
+        public void bind(Message message) throws ParseException {
+            Log.i(TAG, "bind: " + message.getMessage());
+
+            tvMessage.setText(message.getMessage());
+
+            String fetchedId = message.getUser().getObjectId();
+
+            Log.i(TAG, "bind: " + fetchedId);
+            if (fetchedId.equals(ParseUser.getCurrentUser().getObjectId())) {
+                ivMe.setVisibility(View.VISIBLE);
+                ivOther.setVisibility(View.GONE);
+                Log.i(TAG, "bind: My Message");
+                Glide.with(context).load(message.getUser().fetchIfNeeded().getParseFile("profilePicture").getUrl()).transform(new CircleCrop()).into(ivMe);
+            } else {
+                ivOther.setVisibility(View.VISIBLE);
+                ivMe.setVisibility(View.GONE);
+                Log.i(TAG, "bind: Other Message");
+                Glide.with(context).load(message.getUser().fetchIfNeeded().getParseFile("profilePicture").getUrl()).transform(new CircleCrop()).into(ivOther);
+            }
         }
     }
 }

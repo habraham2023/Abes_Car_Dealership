@@ -65,7 +65,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/listingTitle"
                 android:inputType="text"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:nextFocusDown="@+id/descriptionEditText" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -194,7 +195,9 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/priceInput"
                     android:inputType="numberDecimal"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:imeOptions="actionNext"
+                    android:nextFocusRight="@+id/contactLayout"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout

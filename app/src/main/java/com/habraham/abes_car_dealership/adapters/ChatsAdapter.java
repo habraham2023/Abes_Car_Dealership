@@ -1,6 +1,7 @@
 package com.habraham.abes_car_dealership.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,14 +16,10 @@ import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.activities.MainActivity;
 import com.habraham.abes_car_dealership.fragments.ChatFragment;
 import com.habraham.abes_car_dealership.models.Chat;
-import com.habraham.abes_car_dealership.models.Listing;
-import com.habraham.abes_car_dealership.models.Message;
-import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,7 +45,11 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Chat chat = chats.get(position);
-        holder.bind(chat);
+        try {
+            holder.bind(chat);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -81,32 +82,12 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
             itemView.setOnClickListener(this);
         }
 
-        public void bind(Chat chat) {
-            chat.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-                @Override
-                public void done(ParseObject fetchedChat, ParseException e) {
-                    ((Chat) fetchedChat).getListing().fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-                        @Override
-                        public void done(ParseObject fetchListing, ParseException e) {
-                            tvListingTitle.setText(((Listing) fetchListing).getTitle());
-                            ((Listing) fetchListing).getSeller().fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-                                @Override
-                                public void done(ParseObject fetchedUser, ParseException e) {
-                                    tvSellerName.setText(((ParseUser) fetchedUser).getUsername());
-                                }
-                            });
-                        }
-                    });
-                    if (((Chat) fetchedChat).getChatLog() != null)
-                        ((Chat) fetchedChat).getChatLog().get(0).fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-                            @Override
-                            public void done(ParseObject fetchedMessage, ParseException e) {
-                                tvLastMessage.setText(((Message) fetchedMessage).getMessage());
-                            }
-                        });
-                    tvTime.setText(setTime(fetchedChat.getUpdatedAt().toString()));
-                }
-            });
+        public void bind(Chat chat) throws ParseException {
+            tvListingTitle.setText(chat.getListing().getTitle());
+            tvSellerName.setText(chat.getListing().getSeller().fetchIfNeeded().getUsername());
+            if (chat.getChatLog() != null)
+                tvLastMessage.setText(chat.getChatLog().get(0).getMessage());
+            tvTime.setText(setTime(chat.getUpdatedAt().toString()));
         }
 
         private String setTime(String createdAt) {

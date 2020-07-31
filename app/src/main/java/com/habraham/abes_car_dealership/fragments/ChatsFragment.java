@@ -65,6 +65,7 @@ public class ChatsFragment extends Fragment {
 
         ParseQuery<Chat> mainQuery = ParseQuery.or(queries);
         mainQuery.include(Chat.KEY_CHAT_LOG);
+        mainQuery.include(Chat.KEY_LISTING);
         mainQuery.include(Chat.KEY_INITIATOR);
         mainQuery.include(Chat.KEY_CONTACTED);
         mainQuery.orderByDescending(Chat.KEY_UPDATED_AT);

@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.habraham.abes_car_dealership.EndlessRecyclerViewScrollListener;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.MessageAdapter;
 import com.habraham.abes_car_dealership.models.Chat;
@@ -149,7 +148,12 @@ public class ChatFragment extends Fragment {
                 }
 
                 ChatFragment.this.chat = chat;
-                List<Message> initMessages = chat.getChatLog();
+                List<Message> initMessages = null;
+                try {
+                    initMessages = ((Chat) chat.fetchIfNeeded()).getChatLog();
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
                 Log.i(TAG, "done: " + initMessages);
 
                 if (initMessages != null) messages.addAll(initMessages);
