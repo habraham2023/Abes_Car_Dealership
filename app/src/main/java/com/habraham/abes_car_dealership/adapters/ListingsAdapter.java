@@ -79,36 +79,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    private void deleteListing(final int position) {
-        final Listing toBeDeleted = listings.get(position);
-        ParseQuery<Chat> relatedChatsQuery = ParseQuery.getQuery(Chat.class);
-        relatedChatsQuery.whereEqualTo(Chat.KEY_LISTING, toBeDeleted);
-        Log.i(TAG, "deleteListing: ");
-        relatedChatsQuery.findInBackground(new FindCallback<Chat>() {
-            @Override
-            public void done(List<Chat> chats, ParseException e) {
-                Log.i(TAG, "done: " + chats);
-                for (Chat chat : chats) chat.deleteInBackground();
-                ParseQuery<Favorite> favoriteParseQuery = ParseQuery.getQuery(Favorite.class);
-                favoriteParseQuery.whereEqualTo(Favorite.KEY_LISTING, toBeDeleted);
-                favoriteParseQuery.findInBackground(new FindCallback<Favorite>() {
-                    @Override
-                    public void done(List<Favorite> favorites, ParseException e) {
-                        for (Favorite favorite : favorites) favorite.deleteInBackground();
-                        toBeDeleted.deleteInBackground(new DeleteCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                listings.remove(position);
-                                notifyItemRemoved(position);
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    }
-
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView tvTitle;
         private TextView tvDescription;
         private TextView tvPrice;
@@ -125,7 +96,6 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
             ivFirstImage = itemView.findViewById(R.id.ivFirstImage);
             ivFavorite = itemView.findViewById(R.id.ivFavorite);
             itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
         }
 
         public void bind(final Listing listing) {
@@ -212,32 +182,6 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         public void onClick(View view) {
             DetailsFragment detailsFragment = DetailsFragment.newInstance(listings.get(getAdapterPosition()));
             ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, detailsFragment).addToBackStack(null).commit();
-        }
-
-
-        @Override
-        public boolean onLongClick(View view) {
-            if (fragment instanceof MyListingsFragment) {
-                Log.i(TAG, "onLongClick: is MyListingsFragment");
-                new MaterialAlertDialogBuilder(context)
-                        .setTitle("Delete this listing?")
-                        .setMessage(listings.get(getAdapterPosition()).getTitle())
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.i(TAG, "onClick: Don't Delete");
-                            }
-                        })
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.i(TAG, "onClick: Do Delete");
-                                deleteListing(getAdapterPosition());
-                            }
-                        }).show();
-                return true;
-            }
-            return false;
         }
     }
 }

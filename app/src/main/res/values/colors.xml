@@ -8,4 +8,6 @@
     <color name="secondaryDarkColor">#003d33</color>
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#ffffff</color>
+    <color name="cardinal">#d11a2a</color>
+
 </resources>
