@@ -1,9 +1,11 @@
 package com.habraham.abes_car_dealership.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,10 +30,12 @@ public class ChatsFragment extends Fragment {
     RecyclerView rvChats;
     List<Chat> chats;
     ChatsAdapter chatsAdapter;
+    ProgressBar progressBar;
 
     public ChatsFragment() {
         // Required empty public constructor
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,7 +48,7 @@ public class ChatsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rvChats = view.findViewById(R.id.rvChats);
-
+        progressBar = view.findViewById(R.id.progressBar);
         chats = new ArrayList<>();
         chatsAdapter = new ChatsAdapter(getContext(), chats);
 
@@ -52,6 +56,7 @@ public class ChatsFragment extends Fragment {
     }
 
     private void getChats() {
+        progressBar.setVisibility(View.VISIBLE);
         chatsAdapter.clear();
         ParseQuery<Chat> contactedQuery = ParseQuery.getQuery(Chat.class);
         contactedQuery.whereEqualTo(Chat.KEY_CONTACTED, ParseUser.getCurrentUser());
@@ -72,9 +77,13 @@ public class ChatsFragment extends Fragment {
         mainQuery.findInBackground(new FindCallback<Chat>() {
             @Override
             public void done(List<Chat> mChats, ParseException e) {
+                if (e == null) {
                 chatsAdapter.addAll(mChats);
                 rvChats.setLayoutManager(new LinearLayoutManager(getContext()));
                 rvChats.setAdapter(chatsAdapter);
+                }
+
+                progressBar.setVisibility(View.GONE);
             }
         });
     }
