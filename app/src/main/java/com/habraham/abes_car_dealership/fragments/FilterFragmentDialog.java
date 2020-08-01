@@ -25,6 +25,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.databinding.FragmentFilterBinding;
 import com.habraham.abes_car_dealership.models.Make;
 import com.habraham.abes_car_dealership.models.Model;
 import com.habraham.abes_car_dealership.rawValues;
@@ -50,7 +51,7 @@ public class FilterFragmentDialog extends DialogFragment {
 
     MaterialButton btnCancel;
     MaterialButton btnApply;
-
+    FragmentFilterBinding binding;
     public FilterFragmentDialog() {
     }
 
@@ -81,22 +82,31 @@ public class FilterFragmentDialog extends DialogFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_filter, container, false);
+        binding = FragmentFilterBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        makeLayout = view.findViewById(R.id.makeLayout);
-        makeDropdown = view.findViewById(R.id.makeDropdown);
-        modelLayout = view.findViewById(R.id.modelLayout);
-        modelDropdown = view.findViewById(R.id.modelDropdown);
-        yearLayout = view.findViewById(R.id.yearLayout);
-        yearDropdown = view.findViewById(R.id.yearDropdown);
-        distanceEditText = view.findViewById(R.id.distanceEditText);
-        sortDropdown = view.findViewById(R.id.sortDropdown);
-        btnCancel = view.findViewById(R.id.btnCancel);
-        btnApply = view.findViewById(R.id.btnApply);
+        makeLayout = binding.makeLayout;
+        makeDropdown = binding.makeDropdown;
+        modelLayout = binding.modelLayout;
+        modelDropdown = binding.modelDropdown;
+        yearLayout = binding.yearLayout;
+        yearDropdown = binding.yearDropdown;
+        distanceEditText = binding.distanceEditText;
+        sortDropdown = binding.sortDropdown;
+        btnCancel = binding.btnCancel;
+        btnApply = binding.btnApply;
 
         setMakes();
 

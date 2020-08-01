@@ -29,6 +29,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.SliderItem;
 import com.habraham.abes_car_dealership.adapters.SliderAdapter;
+import com.habraham.abes_car_dealership.databinding.FragmentDetailsBinding;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
@@ -62,7 +63,7 @@ public class DetailsFragment extends Fragment {
     DotsIndicator dotsIndicator;
     List<SliderItem> sliderItems;
     private Listing listing;
-
+    private FragmentDetailsBinding binding;
     public DetailsFragment() {
         // Required empty public constructor
     }
@@ -87,7 +88,16 @@ public class DetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_details, container, false);
+        binding = FragmentDetailsBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -95,18 +105,18 @@ public class DetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Log.i(TAG, "onViewCreated: " + listing.getDescription());
 
-        toolbar = view.findViewById(R.id.toolbar);
-        tvTitle = view.findViewById(R.id.tvTitle);
-        tvDescription = view.findViewById(R.id.tvDescription);
-        tvPrice = view.findViewById(R.id.tvPrice);
-        tvSellerName = view.findViewById(R.id.tvSellerName);
-        tvLocation = view.findViewById(R.id.tvLocation);
-        tvContact = view.findViewById(R.id.tvContact);
-        tvExtraInformation = view.findViewById(R.id.tvExtraInformation);
-        ivFavorite = view.findViewById(R.id.ivFavorite);
-        fabAddChat = view.findViewById(R.id.fabAddChat);
-        viewPager2 = view.findViewById(R.id.slider);
-        dotsIndicator = view.findViewById(R.id.dots_indicator);
+        toolbar = binding.toolbar;
+        tvTitle = binding.tvTitle;
+        tvDescription = binding.tvDescription;
+        tvPrice = binding.tvPrice;
+        tvSellerName = binding.tvSellerName;
+        tvLocation = binding.tvLocation;
+        tvContact = binding.tvContact;
+        tvExtraInformation = binding.tvExtraInformation;
+        ivFavorite = binding.ivFavorite;
+        fabAddChat = binding.fabAddChat;
+        viewPager2 = binding.slider;
+        dotsIndicator = binding.dotsIndicator;
 
         toolbar.setNavigationIcon(R.drawable.back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

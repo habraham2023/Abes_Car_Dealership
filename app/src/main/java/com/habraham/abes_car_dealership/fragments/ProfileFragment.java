@@ -18,6 +18,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.material.button.MaterialButton;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.activities.OnboardingActivity;
+import com.habraham.abes_car_dealership.databinding.FragmentProfileBinding;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -31,6 +32,7 @@ public class ProfileFragment extends Fragment {
     MaterialButton btnEditProfile;
     MaterialButton btnLogout;
     Toolbar toolbar;
+    private FragmentProfileBinding binding;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -40,20 +42,29 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        binding = FragmentProfileBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ivProfilePicture = view.findViewById(R.id.ivProfilePicture);
-        tvScreenName = view.findViewById(R.id.tvScreenName);
-        tvUsername = view.findViewById(R.id.tvUsername);
-        tvBio = view.findViewById(R.id.tvBio);
-        btnLogout = view.findViewById(R.id.btnLogout);
-        btnEditProfile = view.findViewById(R.id.btnEditProfile);
-        toolbar = view.findViewById(R.id.toolbar);
+        ivProfilePicture = binding.ivProfilePicture;
+        tvScreenName = binding.tvScreenName;
+        tvUsername = binding.tvUsername;
+        tvBio = binding.tvBio;
+        btnLogout = binding.btnLogout;
+        btnEditProfile = binding.btnEditProfile;
+        toolbar = binding.toolbar;
 
         toolbar.setNavigationIcon(R.drawable.back);
 

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.MessageAdapter;
+import com.habraham.abes_car_dealership.databinding.FragmentChatBinding;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Message;
 import com.parse.GetCallback;
@@ -46,6 +47,7 @@ public class ChatFragment extends Fragment {
     Toolbar toolbar;
     private Chat chat;
     private String objectID;
+    private FragmentChatBinding binding;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -76,18 +78,27 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat, container, false);
+        binding = FragmentChatBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvMessages = view.findViewById(R.id.rvMessages);
-        etMessage = view.findViewById(R.id.etMessage);
-        send = view.findViewById(R.id.send);
+        rvMessages = binding.rvMessages;
+        etMessage = binding.etMessage;
+        send = binding.send;
 
-        toolbar = view.findViewById(R.id.toolbar);
+        toolbar = binding.toolbar;
 
         toolbar.setNavigationIcon(R.drawable.back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

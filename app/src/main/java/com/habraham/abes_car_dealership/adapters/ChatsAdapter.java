@@ -1,7 +1,6 @@
 package com.habraham.abes_car_dealership.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,12 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.activities.MainActivity;
+import com.habraham.abes_car_dealership.databinding.ChatItemBinding;
 import com.habraham.abes_car_dealership.fragments.ChatFragment;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.parse.ParseException;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,6 +27,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
 
     Context context;
     List<Chat> chats;
+    private ChatItemBinding binding;
 
     public ChatsAdapter(Context context, List<Chat> chats) {
         this.context = context;
@@ -38,7 +38,10 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.chat_item, parent, false);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        binding = ChatItemBinding.inflate(inflater, parent, false);
+
+        View view = binding.getRoot();
         return new ViewHolder(view);
     }
 
@@ -75,10 +78,10 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvSellerName = itemView.findViewById(R.id.tvSellerName);
-            tvListingTitle = itemView.findViewById(R.id.tvListingTitle);
-            tvTime = itemView.findViewById(R.id.tvTime);
-            tvLastMessage = itemView.findViewById(R.id.tvLastMessage);
+            tvSellerName = binding.tvSellerName;
+            tvListingTitle = binding.tvListingTitle;
+            tvTime = binding.tvTime;
+            tvLastMessage = binding.tvLastMessage;
             itemView.setOnClickListener(this);
         }
 

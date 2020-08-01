@@ -25,6 +25,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habraham.abes_car_dealership.EndlessRecyclerViewScrollListener;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.ListingsAdapter;
+import com.habraham.abes_car_dealership.databinding.FragmentMyListingsBinding;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
@@ -48,7 +49,7 @@ public class MyListingsFragment extends Fragment {
     Toolbar toolbar;
     FloatingActionButton fabAddListing;
     EndlessRecyclerViewScrollListener scrollListener;
-
+    private FragmentMyListingsBinding binding;
     public MyListingsFragment() {
         // Required empty public constructor
     }
@@ -57,16 +58,25 @@ public class MyListingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_listings, container, false);
+        binding = FragmentMyListingsBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvMyListings = view.findViewById(R.id.rvMyListings);
-        toolbar = view.findViewById(R.id.toolbar);
-        fabAddListing  = view.findViewById(R.id.fabAddListing);
+        rvMyListings = binding.rvMyListings;
+        toolbar = binding.toolbar;
+        fabAddListing = binding.fabAddListing;
 
         myListings = new ArrayList<>();
         adapter = new ListingsAdapter(getContext(), myListings, null, this);

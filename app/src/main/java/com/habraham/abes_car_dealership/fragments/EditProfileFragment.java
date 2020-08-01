@@ -28,6 +28,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.databinding.FragmentEditProfileBinding;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -51,6 +52,7 @@ public class EditProfileFragment extends Fragment {
     TextInputEditText bioEditText;
     MaterialButton btnTakeNew;
     MaterialButton btnSave;
+    private FragmentEditProfileBinding binding;
 
     public EditProfileFragment() {
         // Required empty public constructor
@@ -60,22 +62,31 @@ public class EditProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_profile, container, false);
+        binding = FragmentEditProfileBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        toolbar = view.findViewById(R.id.toolbar);
-        ivProfileImage = view.findViewById(R.id.ivProfilePicture);
-        btnTakeNew = view.findViewById(R.id.btnTakeNew);
-        btnSave = view.findViewById(R.id.btnSave);
+        toolbar = binding.toolbar;
+        ivProfileImage = binding.ivProfilePicture;
+        btnTakeNew = binding.btnTakeNew;
+        btnSave = binding.btnSave;
 
-        screenNameInputLayout = view.findViewById(R.id.screenNameTextInput);
-        screenNameEditText = view.findViewById(R.id.screenNameEditText);
-        bioInputLayout = view.findViewById(R.id.bioTextInput);
-        bioEditText = view.findViewById(R.id.bioEditText);
+        screenNameInputLayout = binding.screenNameTextInput;
+        screenNameEditText = binding.screenNameEditText;
+        bioInputLayout = binding.bioTextInput;
+        bioEditText = binding.bioEditText;
 
         toolbar.setNavigationIcon(R.drawable.back);
 

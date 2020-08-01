@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.databinding.MessageItemBinding;
 import com.habraham.abes_car_dealership.models.Message;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -25,6 +25,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     Context context;
     List<Message> messages;
+    private MessageItemBinding binding;
 
     public MessageAdapter(Context context, List<Message> messages) {
         this.context = context;
@@ -34,7 +35,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.message_item, parent, false);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        binding = MessageItemBinding.inflate(inflater, parent, false);
+        View view = binding.getRoot();
         return new ViewHolder(view);
     }
 
@@ -61,9 +64,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivOther = itemView.findViewById(R.id.ivOther);
-            ivMe = itemView.findViewById(R.id.ivMe);
-            tvMessage = itemView.findViewById(R.id.tvMessage);
+            ivOther = binding.ivOther;
+            ivMe = binding.ivMe;
+            tvMessage = binding.tvMessage;
         }
 
         public void bind(Message message) throws ParseException {

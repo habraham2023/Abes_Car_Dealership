@@ -8,9 +8,11 @@ import androidx.fragment.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.databinding.ActivityMainBinding;
 import com.habraham.abes_car_dealership.fragments.ChatsFragment;
 import com.habraham.abes_car_dealership.fragments.FavoritesFragment;
 import com.habraham.abes_car_dealership.fragments.ListingsFragment;
@@ -19,14 +21,17 @@ import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
-        bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView = binding.bottomNavigation;
 
         // Direct user to Onboarding screen if they don't already logged in
         if (ParseUser.getCurrentUser() == null) {

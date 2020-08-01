@@ -10,6 +10,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.databinding.ActivityLoginBinding;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -20,19 +21,22 @@ public class LoginActivity extends AppCompatActivity {
     TextInputEditText usernameEditText;
     TextInputLayout passwordTextInput;
     TextInputEditText passwordEditText;
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
-        btnSignup = findViewById(R.id.btnSignup);
-        btnContinue = findViewById(R.id.btnContinue);
+        btnSignup = binding.btnSignup;
+        btnContinue = binding.btnContinue;
 
-        usernameEditText = findViewById(R.id.username_edit_text);
+        usernameEditText = binding.usernameEditText;
 
-        passwordTextInput = findViewById(R.id.password_text_input);
-        passwordEditText = findViewById(R.id.password_edit_text);
+        passwordTextInput = binding.passwordTextInput;
+        passwordEditText = binding.passwordEditText;
 
         // Allow user to go to signup screen if they don't have an account
         btnSignup.setOnClickListener(new View.OnClickListener() {

@@ -1,7 +1,6 @@
 package com.habraham.abes_car_dealership.adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
 import android.util.Log;
@@ -17,16 +16,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.databinding.ListingItemBinding;
 import com.habraham.abes_car_dealership.fragments.DetailsFragment;
 import com.habraham.abes_car_dealership.fragments.FavoritesFragment;
-import com.habraham.abes_car_dealership.fragments.MyListingsFragment;
-import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.parse.DeleteCallback;
-import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -43,6 +39,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
     private List<Listing> listings;
     private Location location;
     private Fragment fragment;
+    private ListingItemBinding binding;
 
     public ListingsAdapter(Context context, List<Listing> listings, Location location, Fragment fragment) {
         this.context = context;
@@ -54,7 +51,9 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.listing_item, parent, false);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        binding = ListingItemBinding.inflate(inflater, parent, false);
+        View view = binding.getRoot();
         return new ViewHolder(view);
     }
 
@@ -79,7 +78,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView tvTitle;
         private TextView tvDescription;
         private TextView tvPrice;
@@ -89,12 +88,12 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tvTitle);
-            tvDescription = itemView.findViewById(R.id.tvDescription);
-            tvPrice = itemView.findViewById(R.id.tvPrice);
-            tvDistance = itemView.findViewById(R.id.tvDistance);
-            ivFirstImage = itemView.findViewById(R.id.ivFirstImage);
-            ivFavorite = itemView.findViewById(R.id.ivFavorite);
+            tvTitle = binding.tvTitle;
+            tvDescription = binding.tvDescription;
+            tvPrice = binding.tvPrice;
+            tvDistance = binding.tvDistance;
+            ivFirstImage = binding.ivFirstImage;
+            ivFavorite = binding.ivFavorite;
             itemView.setOnClickListener(this);
         }
 

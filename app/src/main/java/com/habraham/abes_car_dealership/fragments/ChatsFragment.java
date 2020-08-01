@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.ChatsAdapter;
+import com.habraham.abes_car_dealership.databinding.FragmentChatsBinding;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -31,7 +32,7 @@ public class ChatsFragment extends Fragment {
     List<Chat> chats;
     ChatsAdapter chatsAdapter;
     ProgressBar progressBar;
-
+    private FragmentChatsBinding binding;
     public ChatsFragment() {
         // Required empty public constructor
     }
@@ -41,14 +42,23 @@ public class ChatsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chats, container, false);
+        binding = FragmentChatsBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rvChats = view.findViewById(R.id.rvChats);
-        progressBar = view.findViewById(R.id.progressBar);
+        rvChats = binding.rvChats;
+        progressBar = binding.progressBar;
         chats = new ArrayList<>();
         chatsAdapter = new ChatsAdapter(getContext(), chats);
 

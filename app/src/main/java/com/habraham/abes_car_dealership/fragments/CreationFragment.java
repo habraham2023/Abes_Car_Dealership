@@ -37,6 +37,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.SliderItem;
 import com.habraham.abes_car_dealership.adapters.SliderAdapter;
+import com.habraham.abes_car_dealership.databinding.FragmentCreationBinding;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.habraham.abes_car_dealership.models.Make;
 import com.habraham.abes_car_dealership.models.Model;
@@ -115,42 +116,52 @@ public class CreationFragment extends Fragment {
 
     OkHttpClient client = new OkHttpClient();
     private String url = "https://maps.googleapis.com/maps/api/geocode/json";
+    private FragmentCreationBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_creation, container, false);
+        binding = FragmentCreationBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        toolbar = view.findViewById(R.id.toolbar);
-        titleInputLayout = view.findViewById(R.id.titleTextInput);
-        titleEditText = view.findViewById(R.id.titleEditText);
-        descriptionInputLayout = view.findViewById(R.id.descriptionTextInput);
-        descriptionEditText = view.findViewById(R.id.descriptionEditText);
-        btnCreateListing = view.findViewById(R.id.btnCreateListing);
-        makeLayout = view.findViewById(R.id.makeLayout);
-        makeDropdown = view.findViewById(R.id.makeDropdown);
-        modelLayout = view.findViewById(R.id.modelLayout);
-        modelDropdown = view.findViewById(R.id.modelDropdown);
-        yearLayout = view.findViewById(R.id.yearLayout);
-        yearDropdown = view.findViewById(R.id.yearDropdown);
-        btnAddPhoto = view.findViewById(R.id.btnAddPhoto);
-        btnTakePhoto = view.findViewById(R.id.btnTakePhoto);
-        priceLayout = view.findViewById(R.id.priceLayout);
-        priceEditText = view.findViewById(R.id.priceEditText);
-        contactLayout = view.findViewById(R.id.contactLayout);
-        contactEditText = view.findViewById(R.id.contactEditText);
-        extraInformationLayout = view.findViewById(R.id.extraInformationLayout);
-        extraInformationEditText = view.findViewById(R.id.extraInformationEditText);
-        addressLayout = view.findViewById(R.id.addressLayout);
-        addressEditText = view.findViewById(R.id.addressEditText);
-        viewPager2 = view.findViewById(R.id.slider);
-        dotsIndicator = view.findViewById(R.id.dots_indicator);
-        progressBar = view.findViewById(R.id.progressBar);
+        toolbar = binding.toolbar;
+        titleInputLayout = binding.titleTextInput;
+        titleEditText = binding.titleEditText;
+        descriptionInputLayout = binding.descriptionTextInput;
+        descriptionEditText = binding.descriptionEditText;
+        btnCreateListing = binding.btnCreateListing;
+        makeLayout = binding.makeLayout;
+        makeDropdown = binding.makeDropdown;
+        modelLayout = binding.modelLayout;
+        modelDropdown = binding.modelDropdown;
+        yearLayout = binding.yearLayout;
+        yearDropdown = binding.yearDropdown;
+        btnAddPhoto = binding.btnAddPhoto;
+        btnTakePhoto = binding.btnTakePhoto;
+        priceLayout = binding.priceLayout;
+        priceEditText = binding.priceEditText;
+        contactLayout = binding.contactLayout;
+        contactEditText = binding.contactEditText;
+        extraInformationLayout = binding.extraInformationLayout;
+        extraInformationEditText = binding.extraInformationEditText;
+        addressLayout = binding.addressLayout;
+        addressEditText = binding.addressEditText;
+        viewPager2 = binding.slider;
+        dotsIndicator = binding.dotsIndicator;
+        progressBar = binding.progressBar;
 
         photos = new ArrayList<>();
         sliderItems = new ArrayList<>();

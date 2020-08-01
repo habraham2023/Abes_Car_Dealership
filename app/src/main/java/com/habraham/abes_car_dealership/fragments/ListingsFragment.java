@@ -30,6 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habraham.abes_car_dealership.EndlessRecyclerViewScrollListener;
 import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.adapters.ListingsAdapter;
+import com.habraham.abes_car_dealership.databinding.FragmentListingsBinding;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.parse.FindCallback;
@@ -54,6 +55,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
     FloatingActionButton fabFilter;
     SwipeRefreshLayout swipeContainer;
     EndlessRecyclerViewScrollListener scrollListener;
+    private FragmentListingsBinding binding;
 
     String make, model, year, sort;
     int maxDistance;
@@ -66,17 +68,25 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_listings, container, false);
+        binding = FragmentListingsBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        toolbar = view.findViewById(R.id.toolbar);
-        rvListings = view.findViewById(R.id.rvListings);
-        fabFilter = view.findViewById(R.id.fabFilter);
-        swipeContainer = view.findViewById(R.id.swipeContainer);
+        toolbar = binding.toolbar;
+        rvListings = binding.rvListings;
+        fabFilter = binding.fabFilter;
+        swipeContainer = binding.swipeContainer;
 
         adapter = new ListingsAdapter(getContext(), new ArrayList<Listing>(), location, this);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());

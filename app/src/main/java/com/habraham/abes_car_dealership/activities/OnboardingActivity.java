@@ -9,20 +9,24 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.databinding.ActivityOnboardingBinding;
 
 public class OnboardingActivity extends AppCompatActivity {
     private static final String TAG = "OnboardingActivity";
 
     MaterialButton btnLogin;
     MaterialButton btnSignup;
+    private ActivityOnboardingBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_onboarding);
+        binding = ActivityOnboardingBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
-        btnLogin = findViewById(R.id.btnLogin);
-        btnSignup = findViewById(R.id.btnSignup);
+        btnLogin = binding.btnLogin;
+        btnSignup = binding.btnSignup;
 
         // Direct user to Login screen when login button is pressed.
         btnLogin.setOnClickListener(new View.OnClickListener() {
