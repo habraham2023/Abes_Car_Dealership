@@ -213,48 +213,19 @@ public class DetailsFragment extends Fragment {
                             Log.e(TAG, "Exception: ", e);
                         }
                     }
-
-                    // If no existing chat exists add a new one to the existing chats ArrayList
-                    final Chat chat = new Chat();
-                    chat.setInitiator(user);
-                    chat.setContacted(listing.getSeller());
-                    chat.setListing(listing);
-                    chat.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            chats.add(chat);
-                            user.put("chats", chats);
-                            user.saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    ChatFragment chatFragment = ChatFragment.newInstance(chat.getObjectId());
-                                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, chatFragment).addToBackStack(null).commit();
-                                }
-                            });
-                        }
-                    });
-                } else {
-                    // Create a new chats ArrayList and add a Chat object to it
-                    final Chat chat = new Chat();
-                    chat.setInitiator(user);
-                    chat.setContacted(listing.getSeller());
-                    chat.setListing(listing);
-                    chat.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            List<Chat> newChats = new ArrayList<>();
-                            newChats.add(chat);
-                            user.put("chats", newChats);
-                            user.saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    ChatFragment chatFragment = ChatFragment.newInstance(chat.getObjectId());
-                                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, chatFragment).addToBackStack(null).commit();
-                                }
-                            });
-                        }
-                    });
                 }
+
+                final Chat chat = new Chat();
+                chat.setInitiator(user);
+                chat.setContacted(listing.getSeller());
+                chat.setListing(listing);
+                chat.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        ChatFragment chatFragment = ChatFragment.newInstance(chat.getObjectId());
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, chatFragment).addToBackStack(null).commit();
+                    }
+                });
             }
         });
 

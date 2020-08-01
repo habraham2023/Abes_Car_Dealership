@@ -24,6 +24,7 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.livequery.ParseLiveQueryClient;
 import com.parse.livequery.SubscriptionHandling;
 
@@ -34,7 +35,9 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class ChatFragment extends Fragment {
     private static final String TAG = "ChatFragment";
+
     private static final String ARG_CHAT_ID = "chatID";
+
     final List<Message> messages = new ArrayList<>();
     RecyclerView rvMessages;
     MessageAdapter adapter;
@@ -64,6 +67,12 @@ public class ChatFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (chat.getChatLog() == null || chat.getChatLog().size() == 0) chat.deleteInBackground();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -88,38 +97,50 @@ public class ChatFragment extends Fragment {
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
+        final ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
 
         setChat();
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String data = etMessage.getText().toString();
-                if (data == null || data.isEmpty()) return;
-                final Message message = new Message();
-                message.setUser(ParseUser.getCurrentUser());
-                message.setMessage(data);
-                message.setChatID(objectID);
-                message.saveInBackground();
-                etMessage.setText(null);
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                final ParseUser user = ParseUser.getCurrentUser();
+                final ArrayList<Chat> chats = (ArrayList<Chat>) user.get("chats");
+
+                if (chats == null) {
+                    // Create a new chats ArrayList and add a Chat object to it
+                    List<Chat> newChats = new ArrayList<>();
+                    newChats.add(chat);
+                    user.put("chats", newChats);
+                    user.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            sendMessage();
+                        }
+                    });
+                } else {
+                    sendMessage();
+                }
             }
         });
 
-
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
 
-        ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
+        Log.i(TAG, "setLiveQuery: " + objectID);
         parseQuery.whereEqualTo(Message.KEY_CHAT_ID, objectID);
-        SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
 
+        SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
         subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Message>() {
             @Override
-            public void onEvent(ParseQuery<Message> query, Message object) {
+            public void onEvent(ParseQuery<Message> query, final Message object) {
                 messages.add(0, object);
                 chat.put(Chat.KEY_CHAT_LOG, messages);
                 chat.saveInBackground();
+
+                if (getActivity() == null) {
+                    Log.i(TAG, "onEvent: Stop");
+                    return;
+                }
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -129,6 +150,19 @@ public class ChatFragment extends Fragment {
                 });
             }
         });
+    }
+
+    private void sendMessage() {
+        String data = etMessage.getText().toString();
+        if (data == null || data.isEmpty()) return;
+        final Message message = new Message();
+        message.setUser(ParseUser.getCurrentUser());
+        message.setMessage(data);
+        message.setChatID(objectID);
+        message.saveInBackground();
+        etMessage.setText(null);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
     }
 
     public void setChat() {
@@ -148,12 +182,8 @@ public class ChatFragment extends Fragment {
                 }
 
                 ChatFragment.this.chat = chat;
-                List<Message> initMessages = null;
-                try {
-                    initMessages = ((Chat) chat.fetchIfNeeded()).getChatLog();
-                } catch (ParseException ex) {
-                    ex.printStackTrace();
-                }
+                List<Message> initMessages = chat.getChatLog();
+
                 Log.i(TAG, "done: " + initMessages);
 
                 if (initMessages != null) messages.addAll(initMessages);
