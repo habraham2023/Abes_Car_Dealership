@@ -48,7 +48,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
     private static final int _REQUEST_CODE_LOCATION_PERMISSION = 1;
     private static final double METERS_TO_MILES = 0.00062137f;
 
-    public Location location = new Location("location");
+    protected Location location = new Location("location");
     protected ListingsAdapter adapter;
     Toolbar toolbar;
     RecyclerView rvListings;

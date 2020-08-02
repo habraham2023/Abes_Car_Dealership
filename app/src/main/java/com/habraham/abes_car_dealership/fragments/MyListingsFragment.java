@@ -1,25 +1,33 @@
 package com.habraham.abes_car_dealership.fragments;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Canvas;
+import android.location.Location;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habraham.abes_car_dealership.EndlessRecyclerViewScrollListener;
@@ -42,7 +50,7 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 public class MyListingsFragment extends Fragment {
     private static final String TAG = "MyListingsFragment";
-
+    private static final int _REQUEST_CODE_LOCATION_PERMISSION = 1;
     RecyclerView rvMyListings;
     ListingsAdapter adapter;
     List<Listing> myListings;
@@ -50,6 +58,8 @@ public class MyListingsFragment extends Fragment {
     FloatingActionButton fabAddListing;
     EndlessRecyclerViewScrollListener scrollListener;
     private FragmentMyListingsBinding binding;
+    private Location location = new Location("location");
+
     public MyListingsFragment() {
         // Required empty public constructor
     }
@@ -79,7 +89,7 @@ public class MyListingsFragment extends Fragment {
         fabAddListing = binding.fabAddListing;
 
         myListings = new ArrayList<>();
-        adapter = new ListingsAdapter(getContext(), myListings, null, this);
+        adapter = new ListingsAdapter(getContext(), myListings, location, this);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rvMyListings.setLayoutManager(llm);
         rvMyListings.setAdapter(adapter);
@@ -166,6 +176,7 @@ public class MyListingsFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(rvMyListings);
 
         getMyListings(0);
+        getLocation();
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -199,12 +210,58 @@ public class MyListingsFragment extends Fragment {
         myListingsQuery.findInBackground(new FindCallback<Listing>() {
             @Override
             public void done(List<Listing> listings, ParseException e) {
-                if(page == 0) adapter.clear();
+                if (page == 0) adapter.clear();
                 Log.i(TAG, "done: " + listings.size());
                 adapter.addAll(listings);
             }
         });
     }
 
+    // Ask user for location permission if not yet given
+    public void getLocation() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    _REQUEST_CODE_LOCATION_PERMISSION);
+        } else {
+            getCurrentLocation();
+        }
+    }
 
+    @Override
+    // Check to see if user has denied or accepted the permission request
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == _REQUEST_CODE_LOCATION_PERMISSION && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getCurrentLocation();
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    // Make single location request
+    public void getCurrentLocation() {
+        Log.i(TAG, "getCurrentLocation");
+        final LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationServices.getFusedLocationProviderClient(getActivity())
+                .requestLocationUpdates(locationRequest, new LocationCallback() {
+                    @Override
+                    public void onLocationResult(LocationResult locationResult) {
+                        super.onLocationResult(locationResult);
+                        LocationServices.getFusedLocationProviderClient(getActivity()).removeLocationUpdates(this);
+                        if (locationResult != null && locationResult.getLocations().size() > 0) {
+                            int latestLocationIndex = locationResult.getLocations().size() - 1;
+                            double latitude = locationResult.getLocations().get(latestLocationIndex).getLatitude();
+                            double longitude = locationResult.getLocations().get(latestLocationIndex).getLongitude();
+                            location.setLatitude(latitude);
+                            location.setLongitude(longitude);
+                            Log.i(TAG, "onLocationResult: " + location);
+                        }
+                    }
+                }, Looper.getMainLooper());
+    }
 }
