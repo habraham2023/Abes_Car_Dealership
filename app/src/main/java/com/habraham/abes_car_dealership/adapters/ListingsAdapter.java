@@ -78,6 +78,15 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         notifyDataSetChanged();
     }
 
+    public Listing getListing(int position) {
+        return listings.get(position);
+    }
+
+    public void remove(int position) {
+        listings.remove(position);
+        notifyItemRemoved(position);
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView tvTitle;
         private TextView tvDescription;

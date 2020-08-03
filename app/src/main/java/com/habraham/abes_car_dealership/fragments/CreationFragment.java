@@ -322,7 +322,7 @@ public class CreationFragment extends Fragment {
                 for (Make make : makes) {
                     makeNames.add(make.getName());
                 }
-                makeDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, makeNames));
+                    makeDropdown.setAdapter(new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_popup_item, makeNames));
             }
         });
     }

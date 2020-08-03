@@ -48,59 +48,19 @@ import java.util.List;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
-public class MyListingsFragment extends Fragment {
+public class MyListingsFragment extends ListingsFragment {
     private static final String TAG = "MyListingsFragment";
-    private static final int _REQUEST_CODE_LOCATION_PERMISSION = 1;
-    RecyclerView rvMyListings;
-    ListingsAdapter adapter;
-    List<Listing> myListings;
-    Toolbar toolbar;
-    FloatingActionButton fabAddListing;
-    EndlessRecyclerViewScrollListener scrollListener;
-    private FragmentMyListingsBinding binding;
-    private Location location = new Location("location");
 
     public MyListingsFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        binding = FragmentMyListingsBinding.inflate(getLayoutInflater(), container, false);
-        View view = binding.getRoot();
-
-        return view;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
-    @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvMyListings = binding.rvMyListings;
-        toolbar = binding.toolbar;
-        fabAddListing = binding.fabAddListing;
-
-        myListings = new ArrayList<>();
-        adapter = new ListingsAdapter(getContext(), myListings, location, this);
-        LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        rvMyListings.setLayoutManager(llm);
-        rvMyListings.setAdapter(adapter);
-        scrollListener = new EndlessRecyclerViewScrollListener(llm) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                Log.i(TAG, "onLoadMore: " + page);
-                getMyListings(page);
-            }
-        };
-        rvMyListings.addOnScrollListener(scrollListener);
+        swipeContainer.setEnabled(false);
+        fab.setImageResource(R.drawable.add_listing);
 
         ItemTouchHelper.SimpleCallback rvCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
@@ -114,7 +74,7 @@ public class MyListingsFragment extends Fragment {
                     Log.i(TAG, "onLongClick: is MyListingsFragment");
                     new MaterialAlertDialogBuilder(getContext())
                             .setTitle("Delete this listing?")
-                            .setMessage(myListings.get(viewHolder.getAdapterPosition()).getTitle())
+                            .setMessage(adapter.getListing(viewHolder.getAdapterPosition()).getTitle())
                             .setNegativeButton("No", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -132,7 +92,7 @@ public class MyListingsFragment extends Fragment {
             }
 
             private void deleteListing(final int position) {
-                final Listing toBeDeleted = myListings.get(position);
+                final Listing toBeDeleted = adapter.getListing(position);
                 ParseQuery<Chat> relatedChatsQuery = ParseQuery.getQuery(Chat.class);
                 relatedChatsQuery.whereEqualTo(Chat.KEY_LISTING, toBeDeleted);
                 Log.i(TAG, "deleteListing: ");
@@ -150,9 +110,7 @@ public class MyListingsFragment extends Fragment {
                                 toBeDeleted.deleteInBackground(new DeleteCallback() {
                                     @Override
                                     public void done(ParseException e) {
-                                        myListings.remove(position);
-                                        adapter.notifyItemRemoved(position);
-
+                                        adapter.remove(position);
                                     }
                                 });
                             }
@@ -173,9 +131,9 @@ public class MyListingsFragment extends Fragment {
         };
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(rvCallback);
-        itemTouchHelper.attachToRecyclerView(rvMyListings);
+        itemTouchHelper.attachToRecyclerView(rvListings);
 
-        getMyListings(0);
+        getListings(0);
         getLocation();
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -191,7 +149,7 @@ public class MyListingsFragment extends Fragment {
             }
         });
 
-        fabAddListing.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CreationFragment creationFragment = new CreationFragment();
@@ -200,8 +158,9 @@ public class MyListingsFragment extends Fragment {
         });
     }
 
+    @Override
     // Get all listings that the user has created
-    private void getMyListings(final int page) {
+    protected void getListings(final int page) {
         ParseQuery<Listing> myListingsQuery = ParseQuery.getQuery(Listing.class);
         myListingsQuery.whereEqualTo(Listing.KEY_SELLER, ParseUser.getCurrentUser());
         myListingsQuery.orderByDescending("createdAt");
@@ -215,53 +174,5 @@ public class MyListingsFragment extends Fragment {
                 adapter.addAll(listings);
             }
         });
-    }
-
-    // Ask user for location permission if not yet given
-    public void getLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    _REQUEST_CODE_LOCATION_PERMISSION);
-        } else {
-            getCurrentLocation();
-        }
-    }
-
-    @Override
-    // Check to see if user has denied or accepted the permission request
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == _REQUEST_CODE_LOCATION_PERMISSION && grantResults.length > 0) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getCurrentLocation();
-            }
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    // Make single location request
-    public void getCurrentLocation() {
-        Log.i(TAG, "getCurrentLocation");
-        final LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationServices.getFusedLocationProviderClient(getActivity())
-                .requestLocationUpdates(locationRequest, new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        super.onLocationResult(locationResult);
-                        LocationServices.getFusedLocationProviderClient(getActivity()).removeLocationUpdates(this);
-                        if (locationResult != null && locationResult.getLocations().size() > 0) {
-                            int latestLocationIndex = locationResult.getLocations().size() - 1;
-                            double latitude = locationResult.getLocations().get(latestLocationIndex).getLatitude();
-                            double longitude = locationResult.getLocations().get(latestLocationIndex).getLongitude();
-                            location.setLatitude(latitude);
-                            location.setLongitude(longitude);
-                            Log.i(TAG, "onLocationResult: " + location);
-                        }
-                    }
-                }, Looper.getMainLooper());
     }
 }

@@ -52,7 +52,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
     protected ListingsAdapter adapter;
     Toolbar toolbar;
     RecyclerView rvListings;
-    FloatingActionButton fabFilter;
+    protected FloatingActionButton fab;
     SwipeRefreshLayout swipeContainer;
     EndlessRecyclerViewScrollListener scrollListener;
     private FragmentListingsBinding binding;
@@ -85,7 +85,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         super.onViewCreated(view, savedInstanceState);
         toolbar = binding.toolbar;
         rvListings = binding.rvListings;
-        fabFilter = binding.fabFilter;
+        fab = binding.fab;
         swipeContainer = binding.swipeContainer;
 
         adapter = new ListingsAdapter(getContext(), new ArrayList<Listing>(), location, this);
@@ -103,6 +103,8 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         rvListings.addOnScrollListener(scrollListener);
         adapter.clear();
 
+        fab.setImageResource(R.drawable.filter);
+
         make = model = year = sort = "";
         maxDistance = Integer.MAX_VALUE;
 
@@ -118,7 +120,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
             }
         });
 
-        fabFilter.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FilterFragmentDialog filterFragmentDialog = FilterFragmentDialog.newInstance();
