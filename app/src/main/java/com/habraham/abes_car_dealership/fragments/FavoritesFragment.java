@@ -3,17 +3,12 @@ package com.habraham.abes_car_dealership.fragments;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.habraham.abes_car_dealership.R;
 import com.habraham.abes_car_dealership.models.Listing;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -55,6 +50,9 @@ public class FavoritesFragment extends ListingsFragment {
                     }
                 }
                 Log.i(TAG, "done: " + filtered);
+                shimmerFrameLayout.stopShimmerAnimation();
+                shimmerFrameLayout.setVisibility(View.GONE);
+                swipeContainer.setVisibility(View.VISIBLE);
                 adapter.clear();
                 adapter.addAll(filtered);
             }
@@ -63,6 +61,10 @@ public class FavoritesFragment extends ListingsFragment {
 
     @Override
     public void onFinishFilterDialog(Intent i) {
+        shimmerFrameLayout.setVisibility(View.VISIBLE);
+        swipeContainer.setVisibility(View.GONE);
+        shimmerFrameLayout.startShimmerAnimation();
+
         make = i.getStringExtra("make");
         model = i.getStringExtra("model");
         year = i.getStringExtra("year");
@@ -108,7 +110,9 @@ public class FavoritesFragment extends ListingsFragment {
                             return (int) (listing2.getDistance() - listing1.getDistance());
                         }
                     });
-
+                shimmerFrameLayout.stopShimmerAnimation();
+                shimmerFrameLayout.setVisibility(View.GONE);
+                swipeContainer.setVisibility(View.VISIBLE);
                 adapter.clear();
                 adapter.addAll(newListings);
             }

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginTop="8dp"
+    android:minHeight="40dp"
+    app:cardElevation="2dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <RelativeLayout
+            android:id="@+id/llHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvSellerName"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@color/colorGrey" />
+
+            <TextView
+                android:id="@+id/tvListingTitle"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/tvSellerName"
+                android:background="@color/colorGrey" />
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:background="@color/colorGrey" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tvLastMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/llHeading"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorGrey" />
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

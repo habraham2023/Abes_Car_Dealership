@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -50,15 +51,15 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
 
     protected Location location = new Location("location");
     protected ListingsAdapter adapter;
+    protected FloatingActionButton fab;
+    protected ShimmerFrameLayout shimmerFrameLayout;
     Toolbar toolbar;
     RecyclerView rvListings;
-    protected FloatingActionButton fab;
     SwipeRefreshLayout swipeContainer;
     EndlessRecyclerViewScrollListener scrollListener;
-    private FragmentListingsBinding binding;
-
     String make, model, year, sort;
     int maxDistance;
+    private FragmentListingsBinding binding;
 
     public ListingsFragment() {
         // Required empty public constructor
@@ -87,6 +88,9 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         rvListings = binding.rvListings;
         fab = binding.fab;
         swipeContainer = binding.swipeContainer;
+        shimmerFrameLayout = binding.shimmerFrameLayout;
+
+        shimmerFrameLayout.startShimmerAnimation();
 
         adapter = new ListingsAdapter(getContext(), new ArrayList<Listing>(), location, this);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -196,9 +200,12 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
                 query.findInBackground(new FindCallback<Listing>() {
                     @Override
                     public void done(List<Listing> newListings, ParseException e) {
+                        shimmerFrameLayout.stopShimmerAnimation();
+                        shimmerFrameLayout.setVisibility(View.GONE);
+                        swipeContainer.setVisibility(View.VISIBLE);
+                        swipeContainer.setRefreshing(false);
                         if (page == 0) adapter.clear();
                         adapter.addAll(newListings);
-                        swipeContainer.setRefreshing(false);
                         Log.i(TAG, "done: " + newListings.size());
                     }
                 });
@@ -208,6 +215,10 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
 
     @Override
     public void onFinishFilterDialog(Intent i) {
+        shimmerFrameLayout.setVisibility(View.VISIBLE);
+        swipeContainer.setVisibility(View.GONE);
+        shimmerFrameLayout.startShimmerAnimation();
+
         make = i.getStringExtra("make");
         model = i.getStringExtra("model");
         year = i.getStringExtra("year");
@@ -250,7 +261,9 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
                             return (int) (listing2.getDistance() - listing1.getDistance());
                         }
                     });
-
+                shimmerFrameLayout.stopShimmerAnimation();
+                shimmerFrameLayout.setVisibility(View.GONE);
+                swipeContainer.setVisibility(View.VISIBLE);
                 adapter.clear();
                 adapter.addAll(newListings);
             }

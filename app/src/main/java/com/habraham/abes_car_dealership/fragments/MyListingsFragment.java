@@ -1,39 +1,21 @@
 package com.habraham.abes_car_dealership.fragments;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.graphics.Canvas;
-import android.location.Location;
 import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.habraham.abes_car_dealership.EndlessRecyclerViewScrollListener;
 import com.habraham.abes_car_dealership.R;
-import com.habraham.abes_car_dealership.adapters.ListingsAdapter;
-import com.habraham.abes_car_dealership.databinding.FragmentMyListingsBinding;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
@@ -43,7 +25,6 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
@@ -169,6 +150,9 @@ public class MyListingsFragment extends ListingsFragment {
         myListingsQuery.findInBackground(new FindCallback<Listing>() {
             @Override
             public void done(List<Listing> listings, ParseException e) {
+                shimmerFrameLayout.stopShimmerAnimation();
+                shimmerFrameLayout.setVisibility(View.GONE);
+                swipeContainer.setVisibility(View.VISIBLE);
                 if (page == 0) adapter.clear();
                 Log.i(TAG, "done: " + listings.size());
                 adapter.addAll(listings);

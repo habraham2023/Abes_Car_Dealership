@@ -1,11 +1,9 @@
 package com.habraham.abes_car_dealership.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.habraham.abes_car_dealership.R;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.habraham.abes_car_dealership.adapters.ChatsAdapter;
 import com.habraham.abes_car_dealership.databinding.FragmentChatsBinding;
 import com.habraham.abes_car_dealership.models.Chat;
@@ -31,8 +29,10 @@ public class ChatsFragment extends Fragment {
     RecyclerView rvChats;
     List<Chat> chats;
     ChatsAdapter chatsAdapter;
-    ProgressBar progressBar;
+    ShimmerFrameLayout shimmerFrameLayout;
+
     private FragmentChatsBinding binding;
+
     public ChatsFragment() {
         // Required empty public constructor
     }
@@ -58,15 +58,16 @@ public class ChatsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rvChats = binding.rvChats;
-        progressBar = binding.progressBar;
+        shimmerFrameLayout = binding.shimmerFrameLayout;
+
         chats = new ArrayList<>();
         chatsAdapter = new ChatsAdapter(getContext(), chats);
+        shimmerFrameLayout.startShimmerAnimation();
 
         getChats();
     }
 
     private void getChats() {
-        progressBar.setVisibility(View.VISIBLE);
         chatsAdapter.clear();
         ParseQuery<Chat> contactedQuery = ParseQuery.getQuery(Chat.class);
         contactedQuery.whereEqualTo(Chat.KEY_CONTACTED, ParseUser.getCurrentUser());
@@ -88,12 +89,14 @@ public class ChatsFragment extends Fragment {
             @Override
             public void done(List<Chat> mChats, ParseException e) {
                 if (e == null) {
-                chatsAdapter.addAll(mChats);
-                rvChats.setLayoutManager(new LinearLayoutManager(getContext()));
-                rvChats.setAdapter(chatsAdapter);
+                    chatsAdapter.addAll(mChats);
+                    rvChats.setLayoutManager(new LinearLayoutManager(getContext()));
+                    rvChats.setAdapter(chatsAdapter);
                 }
 
-                progressBar.setVisibility(View.GONE);
+                shimmerFrameLayout.stopShimmerAnimation();
+                shimmerFrameLayout.setVisibility(View.GONE);
+                rvChats.setVisibility(View.VISIBLE);
             }
         });
     }

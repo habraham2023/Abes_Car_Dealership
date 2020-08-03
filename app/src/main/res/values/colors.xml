@@ -9,5 +9,6 @@
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#ffffff</color>
     <color name="cardinal">#d11a2a</color>
+    <color name="colorGrey">#dddddd</color>
 
 </resources>
