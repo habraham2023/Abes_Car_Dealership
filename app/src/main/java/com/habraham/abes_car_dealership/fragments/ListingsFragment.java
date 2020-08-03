@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,6 +54,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
     protected ListingsAdapter adapter;
     protected FloatingActionButton fab;
     protected ShimmerFrameLayout shimmerFrameLayout;
+    protected TextView noResults;
     Toolbar toolbar;
     RecyclerView rvListings;
     SwipeRefreshLayout swipeContainer;
@@ -89,6 +91,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         fab = binding.fab;
         swipeContainer = binding.swipeContainer;
         shimmerFrameLayout = binding.shimmerFrameLayout;
+        noResults = binding.noResults;
 
         shimmerFrameLayout.startShimmerAnimation();
 
@@ -202,11 +205,17 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
                     public void done(List<Listing> newListings, ParseException e) {
                         shimmerFrameLayout.stopShimmerAnimation();
                         shimmerFrameLayout.setVisibility(View.GONE);
-                        swipeContainer.setVisibility(View.VISIBLE);
                         swipeContainer.setRefreshing(false);
-                        if (page == 0) adapter.clear();
-                        adapter.addAll(newListings);
                         Log.i(TAG, "done: " + newListings.size());
+                        if (newListings.size() == 0 && page == 0) {
+                            noResults.setVisibility(View.VISIBLE);
+                            swipeContainer.setVisibility(View.GONE);
+                        } else {
+                            swipeContainer.setVisibility(View.VISIBLE);
+                            noResults.setVisibility(View.GONE);
+                            if (page == 0) adapter.clear();
+                            adapter.addAll(newListings);
+                        }
                     }
                 });
             }
@@ -217,6 +226,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
     public void onFinishFilterDialog(Intent i) {
         shimmerFrameLayout.setVisibility(View.VISIBLE);
         swipeContainer.setVisibility(View.GONE);
+        noResults.setVisibility(View.GONE);
         shimmerFrameLayout.startShimmerAnimation();
 
         make = i.getStringExtra("make");
@@ -263,9 +273,15 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
                     });
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);
-                swipeContainer.setVisibility(View.VISIBLE);
-                adapter.clear();
-                adapter.addAll(newListings);
+                if (newListings.size() == 0) {
+                    noResults.setVisibility(View.VISIBLE);
+                    swipeContainer.setVisibility(View.GONE);
+                } else {
+                    swipeContainer.setVisibility(View.VISIBLE);
+                    noResults.setVisibility(View.GONE);
+                    adapter.clear();
+                    adapter.addAll(newListings);
+                }
             }
         });
     }

@@ -4,6 +4,8 @@ import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -40,9 +42,23 @@ public class MyListingsFragment extends ListingsFragment {
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        toolbar.inflateMenu(R.menu.menu_profile);
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.miSettings:
+                        ProfileFragment profileFragment = new ProfileFragment();
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, profileFragment).addToBackStack(null).commit();
+                        break;
+                }
+                return true;
+            }
+        });
+
         swipeContainer.setEnabled(false);
         fab.setImageResource(R.drawable.add_listing);
-
         ItemTouchHelper.SimpleCallback rvCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -152,11 +168,18 @@ public class MyListingsFragment extends ListingsFragment {
             public void done(List<Listing> listings, ParseException e) {
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);
-                swipeContainer.setVisibility(View.VISIBLE);
-                if (page == 0) adapter.clear();
-                Log.i(TAG, "done: " + listings.size());
-                adapter.addAll(listings);
+                if (listings.size() == 0 && page == 0) {
+                    noResults.setVisibility(View.VISIBLE);
+                    swipeContainer.setVisibility(View.GONE);
+                } else {
+                    swipeContainer.setVisibility(View.VISIBLE);
+                    noResults.setVisibility(View.GONE);
+                    if (page == 0) adapter.clear();
+                    Log.i(TAG, "done: " + listings.size());
+                    adapter.addAll(listings);
+                }
             }
         });
+
     }
 }

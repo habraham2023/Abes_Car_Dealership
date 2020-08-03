@@ -52,9 +52,15 @@ public class FavoritesFragment extends ListingsFragment {
                 Log.i(TAG, "done: " + filtered);
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);
-                swipeContainer.setVisibility(View.VISIBLE);
-                adapter.clear();
-                adapter.addAll(filtered);
+                if (filtered.size() == 0) {
+                    noResults.setVisibility(View.VISIBLE);
+                    swipeContainer.setVisibility(View.GONE);
+                } else {
+                    swipeContainer.setVisibility(View.VISIBLE);
+                    noResults.setVisibility(View.GONE);
+                    adapter.clear();
+                    adapter.addAll(filtered);
+                }
             }
         });
     }
@@ -110,11 +116,18 @@ public class FavoritesFragment extends ListingsFragment {
                             return (int) (listing2.getDistance() - listing1.getDistance());
                         }
                     });
+
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);
-                swipeContainer.setVisibility(View.VISIBLE);
-                adapter.clear();
-                adapter.addAll(newListings);
+                if (newListings.size() == 0) {
+                    noResults.setVisibility(View.VISIBLE);
+                    swipeContainer.setVisibility(View.GONE);
+                } else {
+                    swipeContainer.setVisibility(View.VISIBLE);
+                    noResults.setVisibility(View.GONE);
+                    adapter.clear();
+                    adapter.addAll(newListings);
+                }
             }
         });
     }

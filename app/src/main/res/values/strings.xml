@@ -42,4 +42,5 @@
     <string name="takePhoto">Take Photo</string>
     <string name="maxDistance">Max Distance (miles)</string>
     <string name="sort">Sort</string>
+    <string name="noResults">No Results Found.</string>
 </resources>
