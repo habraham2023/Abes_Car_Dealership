@@ -4,10 +4,13 @@ import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.habraham.abes_car_dealership.R;
+import com.habraham.abes_car_dealership.databinding.FragmentMyListingsBinding;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
@@ -33,6 +37,7 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 public class MyListingsFragment extends ListingsFragment {
     private static final String TAG = "MyListingsFragment";
+    TextView tvMyListingsHeading;
 
     public MyListingsFragment() {
         // Required empty public constructor
@@ -41,6 +46,8 @@ public class MyListingsFragment extends ListingsFragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        tvMyListingsHeading = binding.tvMyListingsHeading;
+        tvMyListingsHeading.setVisibility(View.VISIBLE);
 
         toolbar.inflateMenu(R.menu.menu_profile);
 

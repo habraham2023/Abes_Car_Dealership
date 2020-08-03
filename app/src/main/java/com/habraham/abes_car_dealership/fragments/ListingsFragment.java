@@ -61,7 +61,7 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
     EndlessRecyclerViewScrollListener scrollListener;
     String make, model, year, sort;
     int maxDistance;
-    private FragmentListingsBinding binding;
+    protected FragmentListingsBinding binding;
 
     public ListingsFragment() {
         // Required empty public constructor

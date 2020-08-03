@@ -10,5 +10,5 @@
     <color name="secondaryTextColor">#ffffff</color>
     <color name="cardinal">#d11a2a</color>
     <color name="colorGrey">#dddddd</color>
-
+    <color name="lightGray">#F8FAFC</color>
 </resources>
