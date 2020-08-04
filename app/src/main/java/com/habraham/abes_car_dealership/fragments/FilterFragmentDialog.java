@@ -171,6 +171,11 @@ public class FilterFragmentDialog extends DialogFragment {
         queryMakes.findInBackground(new FindCallback<Make>() {
             @Override
             public void done(List<Make> makes, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "done: ", e);
+                    return;
+                }
+
                 FilterFragmentDialog.this.makes = makes;
                 List<String> makeNames = new ArrayList<>();
                 for (Make make : makes) {

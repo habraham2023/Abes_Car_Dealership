@@ -48,7 +48,7 @@ import java.util.List;
 public class ListingsFragment extends Fragment implements FilterFragmentDialog.FilterDialogListener {
     private static final String TAG = "ListingsFragment";
     private static final int _REQUEST_CODE_LOCATION_PERMISSION = 1;
-    private static final double METERS_TO_MILES = 0.00062137f;
+    protected static final double METERS_TO_MILES = 0.00062137f;
 
     protected Location location = new Location("location");
     protected ListingsAdapter adapter;
@@ -190,6 +190,11 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         Listing.getAllListingsFavorited(new FindCallback<Favorite>() {
             @Override
             public void done(List<Favorite> favorites, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "done: ", e);
+                    return;
+                }
+
                 if (page == 0) Listing.listingsFavorited.clear();
                 for (Favorite favorite : favorites) {
                     Listing.listingsFavorited.add(favorite.getListing().getObjectId());
@@ -244,6 +249,11 @@ public class ListingsFragment extends Fragment implements FilterFragmentDialog.F
         query.findInBackground(new FindCallback<Listing>() {
             @Override
             public void done(List<Listing> newListings, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "done: ", e);
+                    return;
+                }
+
                 for (int i = 0; i < newListings.size(); i++) {
                     ParseGeoPoint sellerLocation = newListings.get(i).getLatLng();
                     if (sellerLocation != null) {

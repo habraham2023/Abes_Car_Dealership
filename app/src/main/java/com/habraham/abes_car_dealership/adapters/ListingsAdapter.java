@@ -132,6 +132,8 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
                         deleteFavorite.getFirstInBackground(new GetCallback<Favorite>() {
                             @Override
                             public void done(Favorite favorite, ParseException e) {
+                                if (e != null) return;
+
                                 // Remove favorite that user has previously made
                                 favorite.deleteInBackground(new DeleteCallback() {
                                     @Override
@@ -161,6 +163,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
                     favorite.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
+                            if (e != null) return;
                             Log.i(TAG, "done: Saved Favorite");
                             Glide.with(context).load(R.drawable.favorite_fill).into(ivFavorite);
                             ivFavorite.setColorFilter(context.getColor(R.color.secondaryDarkColor));

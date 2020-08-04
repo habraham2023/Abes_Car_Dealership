@@ -317,6 +317,8 @@ public class CreationFragment extends Fragment {
         queryMakes.findInBackground(new FindCallback<Make>() {
             @Override
             public void done(List<Make> makes, ParseException e) {
+                if (e != null) return;
+
                 CreationFragment.this.makes = makes;
                 List<String> makeNames = new ArrayList<>();
                 for (Make make : makes) {

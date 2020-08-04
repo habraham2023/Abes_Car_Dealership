@@ -173,6 +173,11 @@ public class MyListingsFragment extends ListingsFragment {
         myListingsQuery.findInBackground(new FindCallback<Listing>() {
             @Override
             public void done(List<Listing> listings, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "done: ", e);
+                    return;
+                }
+
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.setVisibility(View.GONE);
                 if (listings.size() == 0 && page == 0) {

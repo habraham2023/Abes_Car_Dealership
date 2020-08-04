@@ -1,6 +1,7 @@
 package com.habraham.abes_car_dealership.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,11 +93,11 @@ public class ChatsFragment extends Fragment {
                     chatsAdapter.addAll(mChats);
                     rvChats.setLayoutManager(new LinearLayoutManager(getContext()));
                     rvChats.setAdapter(chatsAdapter);
+                    shimmerFrameLayout.stopShimmerAnimation();
+                    shimmerFrameLayout.setVisibility(View.GONE);
+                    rvChats.setVisibility(View.VISIBLE);
                 }
 
-                shimmerFrameLayout.stopShimmerAnimation();
-                shimmerFrameLayout.setVisibility(View.GONE);
-                rvChats.setVisibility(View.VISIBLE);
             }
         });
     }

@@ -22,7 +22,6 @@ import java.util.List;
 
 public class FavoritesFragment extends ListingsFragment {
     private static final String TAG = "FavoritesFragment";
-    private static final double METERS_TO_MILES = 0.00062137f;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -42,6 +41,11 @@ public class FavoritesFragment extends ListingsFragment {
         query.findInBackground(new FindCallback<Listing>() {
             @Override
             public void done(List<Listing> listings, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "done: ", e);
+                    return;
+                }
+
                 Log.i(TAG, "done: " + listings.size());
                 List<Listing> filtered = new ArrayList<>();
                 for (Listing listing : listings) {
@@ -85,6 +89,11 @@ public class FavoritesFragment extends ListingsFragment {
         query.findInBackground(new FindCallback<Listing>() {
             @Override
             public void done(List<Listing> newListings, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "done: ", e);
+                    return;
+                }
+
                 for (int i = 0; i < newListings.size(); i++) {
                     if (!Listing.listingsFavorited.contains(newListings.get(i).getObjectId())) {
                         newListings.remove(i--);
