@@ -83,6 +83,7 @@ public class MyListingsFragment extends ListingsFragment {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Log.i(TAG, "onClick: Don't Delete");
+                                    adapter.notifyItemChanged(viewHolder.getAdapterPosition());
                                 }
                             })
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -130,7 +131,7 @@ public class MyListingsFragment extends ListingsFragment {
                         .addSwipeRightActionIcon(R.drawable.delete)
                         .create()
                         .decorate();
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                super.onChildDraw(c, recyclerView, viewHolder, dX / 4, dY, actionState, isCurrentlyActive);
             }
         };
 

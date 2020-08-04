@@ -3,6 +3,7 @@ package com.habraham.abes_car_dealership.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -60,6 +61,9 @@ public class LoginActivity extends AppCompatActivity {
 
     // Attempts to sign in user with given credentials, if successful direct user to main screen
     private void attemptSignIn(String username, String password) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
