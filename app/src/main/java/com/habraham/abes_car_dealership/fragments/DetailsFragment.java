@@ -2,6 +2,7 @@ package com.habraham.abes_car_dealership.fragments;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -27,16 +28,17 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habraham.abes_car_dealership.R;
-import com.habraham.abes_car_dealership.SliderItem;
 import com.habraham.abes_car_dealership.adapters.SliderAdapter;
 import com.habraham.abes_car_dealership.databinding.FragmentDetailsBinding;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
+import com.habraham.abes_car_dealership.models.SliderItem;
 import com.parse.DeleteCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -49,9 +51,13 @@ public class DetailsFragment extends Fragment {
     private static final String TAG = "DetailsFragment";
 
     private static final String LISTING = "listing";
+    private static final String LOCATION = "location";
+    private static final double METERS_TO_MILES = 0.00062137f;
+
     Toolbar toolbar;
     TextView tvTitle;
     TextView tvDescription;
+    TextView tvDistance;
     TextView tvPrice;
     TextView tvSellerName;
     TextView tvLocation;
@@ -63,15 +69,18 @@ public class DetailsFragment extends Fragment {
     DotsIndicator dotsIndicator;
     List<SliderItem> sliderItems;
     private Listing listing;
+    private Location location;
     private FragmentDetailsBinding binding;
+
     public DetailsFragment() {
         // Required empty public constructor
     }
 
-    public static DetailsFragment newInstance(Listing listing) {
+    public static DetailsFragment newInstance(Listing listing, Location location) {
         DetailsFragment fragment = new DetailsFragment();
         Bundle args = new Bundle();
         args.putParcelable(LISTING, listing);
+        args.putParcelable(LOCATION, location);
         fragment.setArguments(args);
         return fragment;
     }
@@ -81,6 +90,7 @@ public class DetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             listing = getArguments().getParcelable(LISTING);
+            location = getArguments().getParcelable(LOCATION);
         }
     }
 
@@ -108,6 +118,7 @@ public class DetailsFragment extends Fragment {
         toolbar = binding.toolbar;
         tvTitle = binding.tvTitle;
         tvDescription = binding.tvDescription;
+        tvDistance = binding.tvDistance;
         tvPrice = binding.tvPrice;
         tvSellerName = binding.tvSellerName;
         tvLocation = binding.tvLocation;
@@ -128,6 +139,19 @@ public class DetailsFragment extends Fragment {
         });
 
         tvTitle.setText(listing.getTitle());
+
+        ParseGeoPoint sellerLocation = listing.getLatLng();
+        if (location != null) {
+            double distance;
+            if (sellerLocation != null) {
+                Location destination = new Location("destination");
+                destination.setLatitude(sellerLocation.getLatitude());
+                destination.setLongitude(sellerLocation.getLongitude());
+                distance = location.distanceTo(destination) * METERS_TO_MILES;
+                tvDistance.setText(String.format(" %.2fmi", distance));
+            }
+        }
+
         tvDescription.setText(listing.getDescription());
         tvPrice.append(" $" + listing.getPrice());
 

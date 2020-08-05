@@ -1,4 +1,4 @@
-package com.habraham.abes_car_dealership;
+package com.habraham.abes_car_dealership.models;
 
 import android.graphics.Bitmap;
 

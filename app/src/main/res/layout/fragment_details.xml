@@ -76,7 +76,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:paddingHorizontal="8dp">
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -84,10 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginEnd="8dp"
                 android:text="@string/listingTitle"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textStyle="bold" />
@@ -96,8 +94,8 @@
                 android:id="@+id/tvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvPrice"
-                android:layout_marginHorizontal="8dp"
+                android:layout_below="@+id/tvTitle"
+                android:layout_alignParentStart="true"
                 android:layout_marginTop="16dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 tools:text="@tools:sample/lorem[12]" />
@@ -106,46 +104,55 @@
                 android:id="@+id/tvExtraInfoTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_below="@id/tvDistance"
+                android:layout_alignParentStart="true"
                 android:layout_marginTop="16dp"
                 android:text="@string/extraInformation"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textStyle="bold"
-                android:layout_below="@id/tvDescription"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvExtraInformation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
                 android:layout_below="@+id/tvExtraInfoTitle"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="16dp"
                 tools:text="@tools:sample/lorem[20]" />
 
             <TextView
                 android:id="@+id/tvPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvTitle"
+                android:layout_below="@+id/tvDescription"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:text="@string/tvPrice"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+            <TextView
+                android:id="@id/tvDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvPrice"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="8dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                tools:text="2000.00 mi." />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:paddingHorizontal="8dp">
 
             <TextView
                 android:id="@+id/tvSellerName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvSellerInfo"
-                android:layout_marginStart="8dp"
+                android:layout_alignParentStart="true"
                 android:layout_marginTop="16dp"
                 android:text="@string/sellerName"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small" />
@@ -155,7 +162,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvLocation"
-                android:layout_marginStart="8dp"
+                android:layout_alignParentStart="true"
                 android:layout_marginTop="16dp"
                 android:text="@string/tvContact"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small" />
@@ -164,8 +171,8 @@
                 android:id="@+id/tvSellerInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
                 android:text="@string/sellerInfo"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -177,7 +184,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvSellerName"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/tvLocation"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small" />

@@ -12,8 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
-import com.habraham.abes_car_dealership.R;
-import com.habraham.abes_car_dealership.SliderItem;
+import com.habraham.abes_car_dealership.models.SliderItem;
 import com.habraham.abes_car_dealership.databinding.SlideItemContainerBinding;
 
 import java.util.List;

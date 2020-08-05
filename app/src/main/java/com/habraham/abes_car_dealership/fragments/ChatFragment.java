@@ -78,7 +78,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (chat.getChatLog() == null || chat.getChatLog().size() == 0) chat.deleteInBackground();
+        if (chat != null && (chat.getChatLog() == null || chat.getChatLog().size() == 0)) chat.deleteInBackground();
     }
 
     @Override

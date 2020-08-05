@@ -183,7 +183,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
                     destination.setLongitude(sellerLocation.getLongitude());
                     distance = location.distanceTo(destination) * METERS_TO_MILES;
                     Log.i(TAG, "onClick: " + listing.getDistance());
-                    String result = String.format(" %.2fmi", distance);
+                    String result = String.format("%.2fmi", distance);
                     tvDistance.setText(result);
                 }
             }
@@ -191,7 +191,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
 
         @Override
         public void onClick(View view) {
-            DetailsFragment detailsFragment = DetailsFragment.newInstance(listings.get(getAdapterPosition()));
+            DetailsFragment detailsFragment = DetailsFragment.newInstance(listings.get(getAdapterPosition()), location);
             ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, detailsFragment).addToBackStack(null).commit();
         }
     }

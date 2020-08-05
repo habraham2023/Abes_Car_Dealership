@@ -35,7 +35,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.habraham.abes_car_dealership.R;
-import com.habraham.abes_car_dealership.SliderItem;
+import com.habraham.abes_car_dealership.models.SliderItem;
 import com.habraham.abes_car_dealership.adapters.SliderAdapter;
 import com.habraham.abes_car_dealership.databinding.FragmentCreationBinding;
 import com.habraham.abes_car_dealership.models.Listing;
