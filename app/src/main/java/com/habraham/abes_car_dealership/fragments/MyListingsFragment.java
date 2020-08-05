@@ -4,12 +4,8 @@ import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.habraham.abes_car_dealership.R;
-import com.habraham.abes_car_dealership.databinding.FragmentMyListingsBinding;
 import com.habraham.abes_car_dealership.models.Chat;
 import com.habraham.abes_car_dealership.models.Favorite;
 import com.habraham.abes_car_dealership.models.Listing;
@@ -37,10 +32,29 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 public class MyListingsFragment extends ListingsFragment {
     private static final String TAG = "MyListingsFragment";
+    private static final String ARG_SELLER = "seller";
+
     TextView tvMyListingsHeading;
+    ParseUser user;
 
     public MyListingsFragment() {
         // Required empty public constructor
+    }
+
+    public static MyListingsFragment newInstance(ParseUser seller) {
+        MyListingsFragment myListingsFragment = new MyListingsFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_SELLER, seller);
+        myListingsFragment.setArguments(args);
+        return myListingsFragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            user = getArguments().getParcelable(ARG_SELLER);
+        }
     }
 
     @Override
@@ -49,7 +63,20 @@ public class MyListingsFragment extends ListingsFragment {
         tvMyListingsHeading = binding.tvMyListingsHeading;
         tvMyListingsHeading.setVisibility(View.VISIBLE);
 
-        toolbar.inflateMenu(R.menu.menu_profile);
+        if (user == null) {
+            toolbar.inflateMenu(R.menu.menu_profile);
+        } else {
+            tvMyListingsHeading.setText(user.getString("screenName") + "'s Listings:");
+            fab.setVisibility(View.GONE);
+            toolbar.setNavigationIcon(R.drawable.back);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getActivity().getSupportFragmentManager().beginTransaction().remove(MyListingsFragment.this).commit();
+                    getActivity().getSupportFragmentManager().popBackStack();
+                }
+            });
+        }
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -141,19 +168,6 @@ public class MyListingsFragment extends ListingsFragment {
         getListings(0);
         getLocation();
 
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.miSettings:
-                        ProfileFragment profileFragment = new ProfileFragment();
-                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, profileFragment).addToBackStack(null).commit();
-                        break;
-                }
-                return true;
-            }
-        });
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -167,7 +181,11 @@ public class MyListingsFragment extends ListingsFragment {
     // Get all listings that the user has created
     protected void getListings(final int page) {
         ParseQuery<Listing> myListingsQuery = ParseQuery.getQuery(Listing.class);
-        myListingsQuery.whereEqualTo(Listing.KEY_SELLER, ParseUser.getCurrentUser());
+        if (user != null)
+            myListingsQuery.whereEqualTo(Listing.KEY_SELLER, user);
+        else
+            myListingsQuery.whereEqualTo(Listing.KEY_SELLER, ParseUser.getCurrentUser());
+
         myListingsQuery.orderByDescending("createdAt");
         myListingsQuery.setLimit(Listing.QUERY_SIZE);
         myListingsQuery.setSkip(Listing.QUERY_SIZE * page);

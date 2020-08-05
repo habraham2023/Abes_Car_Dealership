@@ -161,7 +161,11 @@ public class DetailsFragment extends Fragment {
         tvContact.append(" " + listing.getContact());
         try {
             ParseUser user = listing.fetchIfNeeded().getParseUser(Listing.KEY_SELLER);
-            tvSellerName.append(" " + user.fetchIfNeeded().getString("screenName"));
+
+            Spannable spannableName = new SpannableString(user.fetchIfNeeded().getString("screenName"));
+            spannableName.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.secondaryLightColor)), 0, spannableName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvSellerName.append(spannableName);
+
             if (user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId()))
                 fabAddChat.setVisibility(View.GONE);
         } catch (ParseException e) {
@@ -271,6 +275,15 @@ public class DetailsFragment extends Fragment {
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
                 startActivity(mapIntent);
+            }
+        });
+
+        tvSellerName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "onClick: " + tvSellerName.getText().toString());
+                MyListingsFragment myListingsFragment = MyListingsFragment.newInstance(listing.getSeller());
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.rlContainer, myListingsFragment).addToBackStack(null).commit();
             }
         });
 
