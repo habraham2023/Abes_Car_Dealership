@@ -1,5 +1,6 @@
 package com.habraham.abes_car_dealership.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,10 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
+import com.habraham.abes_car_dealership.fragments.FilterFragmentDialog;
+import com.habraham.abes_car_dealership.fragments.ImageFragmentDialog;
+import com.habraham.abes_car_dealership.fragments.ListingsFragment;
 import com.habraham.abes_car_dealership.models.SliderItem;
 import com.habraham.abes_car_dealership.databinding.SlideItemContainerBinding;
 
@@ -52,12 +57,13 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
         return sliderItems.size();
     }
 
-    class SliderViewHolder extends RecyclerView.ViewHolder {
+    class SliderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView imageSlide;
 
         public SliderViewHolder(@NonNull View itemView) {
             super(itemView);
             imageSlide = binding.imageSlide;
+            itemView.setOnClickListener(this);
         }
 
         void setImage(SliderItem sliderItem) {
@@ -66,6 +72,14 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
             } else {
                 Glide.with(context).load(sliderItem.getBitmap()).into(imageSlide);
             }
+        }
+
+        @Override
+        public void onClick(View view) {
+            SliderItem sliderItem = sliderItems.get(getAdapterPosition());
+            Log.i(TAG, "onClick: Slider: " + sliderItem);
+            ImageFragmentDialog imageFragmentDialog = ImageFragmentDialog.newInstance(sliderItem.getImageUrl());
+            imageFragmentDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "");
         }
     }
 }

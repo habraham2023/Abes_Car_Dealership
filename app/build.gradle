@@ -48,5 +48,5 @@ dependencies {
     implementation "androidx.palette:palette:1.0.0"
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.3'
     implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
-
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 }
