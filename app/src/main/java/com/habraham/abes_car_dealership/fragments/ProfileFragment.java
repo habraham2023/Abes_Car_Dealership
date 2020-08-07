@@ -79,7 +79,11 @@ public class ProfileFragment extends Fragment {
 
         ParseUser user = ParseUser.getCurrentUser();
 
-        Glide.with(getContext()).load(user.getParseFile("profilePicture").getUrl()).transform(new CircleCrop()).into(ivProfilePicture);
+        try {
+            Glide.with(getContext()).load(user.fetch().getParseFile("profilePicture").getUrl()).transform(new CircleCrop()).into(ivProfilePicture);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         tvScreenName.setText(user.getString("screenName"));
         tvUsername.setText("@" + user.getUsername());
 

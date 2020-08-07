@@ -87,7 +87,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
 
         public void bind(Chat chat) throws ParseException {
             tvListingTitle.setText(chat.getListing().getTitle());
-            tvSellerName.setText(chat.getListing().getSeller().fetchIfNeeded().getUsername());
+            tvSellerName.setText(chat.getListing().getSeller().fetchIfNeeded().getString("screenName"));
             if (chat.getChatLog() != null)
                 tvLastMessage.setText(chat.getChatLog().get(0).getMessage());
             tvTime.setText(setTime(chat.getUpdatedAt().toString()));
