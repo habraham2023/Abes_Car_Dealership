@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +22,8 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class ChatsFragment extends Fragment {
     List<Chat> chats;
     ChatsAdapter chatsAdapter;
     ShimmerFrameLayout shimmerFrameLayout;
-
+    TextView noResults;
     private FragmentChatsBinding binding;
 
     public ChatsFragment() {
@@ -60,6 +63,7 @@ public class ChatsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvChats = binding.rvChats;
         shimmerFrameLayout = binding.shimmerFrameLayout;
+        noResults = binding.noResults;
 
         chats = new ArrayList<>();
         chatsAdapter = new ChatsAdapter(getContext(), chats);
@@ -95,7 +99,13 @@ public class ChatsFragment extends Fragment {
                     rvChats.setAdapter(chatsAdapter);
                     shimmerFrameLayout.stopShimmerAnimation();
                     shimmerFrameLayout.setVisibility(View.GONE);
-                    rvChats.setVisibility(View.VISIBLE);
+                    if (mChats.size() == 0) {
+                        noResults.setVisibility(View.VISIBLE);
+                        rvChats.setVisibility(View.GONE);
+                    } else {
+                        rvChats.setVisibility(View.VISIBLE);
+                        noResults.setVisibility(View.GONE);
+                    }
                 }
 
             }
